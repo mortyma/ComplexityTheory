@@ -1,0 +1,145 @@
+   \documentclass [11pt]{article}
+   \usepackage{latexsym}
+   \usepackage{amssymb}
+   \usepackage{url}
+   \usepackage{paralist}
+
+   \textwidth      15cm
+   \textheight     23cm
+   \oddsidemargin 0.5cm
+   \topmargin    -0.5cm
+   \evensidemargin\oddsidemargin
+
+
+   \pagestyle{plain}
+   \bibliographystyle{plain}
+
+
+\title{Complexity Theory}
+\author{VU 181.142, SS 2014}
+\date{Reading Assignment}
+
+
+\renewcommand{\labelenumi}{(\alph{enumi})}
+\newtheorem{theorem}{Theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\maketitle
+
+\begin{tabbing}
+Submission Deadline: \quad \= \kill
+Name: \> Martin Kalany \\
+Matr-Nr: \> 0825673 \\
+Begin: \> 29 April,  2014  \\
+Submission Deadline: \>13 May, 2014  \\
+send to: \> \url{complexity@dbai.tuwien.ac.at}\\
+Maximum credits: \> 5 
+\end{tabbing}
+
+
+
+\medskip
+\medskip
+
+\noindent
+{\bf Task.} Write a report (ca.\  2 pages) on the following paper
+
+
+
+\begin{center}
+\begin{minipage}{12.0cm}
+M.~Aschinger, C.~Drescher, G.~Gottlob, P.~Jeavons, E.~Thorstensen: \\ 
+Structural Decomposition Methods and What They are Good For. \\
+Proceedings of STACS 2011: 12-28 (2011). \\
+\url{http://drops.dagstuhl.de/opus/volltexte/2011/2996/pdf/3.pdf}
+\end{minipage}
+\end{center}
+
+\noindent
+The report should contain
+%
+\begin{itemize}
+\item a short summary: the main results, the main ideas, motivation for this paper
+\item Things you do not quite understand in this paper, and the reason why (for instance, extra knowledge on \dots required)
+\item Things you liked about the paper (if any)
+\item Things you did not like about the paper (if any)
+\end{itemize}
+%
+
+\noindent
+You are not expected to understand every detail of the paper. Try to understand the ``big picture'' (i.e., main results, main ideas, motivation -- as mentioned above).
+
+\pagebreak
+\textbf{A (very) short summary of the main contributions:}
+The paper discusses the usefulness of \emph{structural decompositions} (such as path, tree and hypergraph decompositions) for
+\begin{inparaenum}[\itshape a\upshape)]
+ \item showing that a problem that is NP-hard in general may be solved efficiently for instances of bounded treewidth, and
+ \item as a mathematical tool to show that a problem is tractable in general.
+\end{inparaenum}
+The paper than gives a more detailed classification of the different use-cases of structural decompositions and proceeds to illustrate each of them with a representative example problem, the forth being the \emph{Partner Units Problem} (PUP). 
+The second main result of the paper is a proof that a special version of this problem - which is NP-hard in general - becomes tractable by exploiting the fact that all yes-instances of the problem necessarily have bounded tree-width (unfortunately, a 2-page summary does not allow for a closer look at this).
+
+\bigskip
+\textbf{In more detail:}
+The central concept of the paper is that of \emph{treewidth}, which is defined as follows. 
+A tree decomposition of a graph $G=(V,E)$ is defined as $\mathcal{P} =(T, \chi)$ where
+\begin{inparaenum}[ a) \upshape]
+ \item $T = (W,F)$ is a forest and
+ \item $\chi$ maps every $w \in W$ to a subset $B\subseteq V$ s.t.
+\end{inparaenum}
+\begin{enumerate}[ a) \upshape]
+ \item $\forall v \in V \; \exists w \in W$ s.t. $v \in \chi(w)$;
+ \item $\forall (v_1, v_2) \in E \; \exists w\in W$ s.t. $\{v_1, v_2\} \subseteq \chi(w)$;
+ \item $\forall v\in V$: $\{w\in W \; | \; v \in \chi(w) \}$ induces a subtree of $T$.
+\end{enumerate}
+The \emph{width} of such a decomposition is defined as $\max_{w\in W}(|\chi(w)| - 1)$ and the \emph{treewidth} $tw(G)$ of a graph $G$ is the minimum width over all its tree decompositions.
+The technique of decomposition and the notion of tree width are then extended to more general finite structures, including hypergraphs. 
+
+While computing the treewidth $tw(\mathcal{A})$ of a structure $\mathcal{A}$ is NP-hard in general, for any fixed $k$ checking if $tw(\mathcal{A}) \leq k$ holds (and if it does, constructing a decomposition of $A$ of optimal width) can be done in logarithmic space.
+
+The problem instances for a large variety of problems in computer science can be represented (more or less naturally) as graphs or hypergraphs; the treewidth of which may then be used as a parameter when reasoning about the computational complexity of the those problems restricted to instances of bounded treewidth.
+
+The paper lists the following main use cases for structural decompositions and provides an example problem for each category. 
+While cases 1) and 2) exploit the fact that for a variety of NP-hard problems many (or even most) problem instances encountered in practice have bounded treewidth, cases 3) and 4) use structural decomposition as a mathematical tool to prove general tractability:
+\begin{enumerate}[ 1) \upshape]
+ \item It can be shown that although the problem becomes tractable for instances of treewidth bounded by $tw(G) \leq k$, the best known algorithms are of complexity $\Omega(n^{f(k)})$, with $\lim_{k\rightarrow \infty} f(k) = \infty$. Actually, it can be shown for many of those problems that they are fixed-parameter intractable.
+ \item A problem is said to be fixed-parameter tractable if there is a function $f$ s.t. the complexity of an algorithm is bounded by $f(k) n^{O(1)}$ for instances with $tw(G) \leq k$. 
+ The following theorem states that a rather large class of problems can actually be solved in time $f(k) O(n)$ (fixed-parameter linearity; it was surprising for me that non-trivial instances of NP-hard problems can actually be solved in linear time): 
+ \begin{theorem}[Courcelle]
+  Any problem expressible in monadic second-order logic over structures of bounded treewidth can be solved in logarithmic space.
+ \end{theorem}
+ \newcounter{enumTemp}
+ \setcounter{enumTemp}{\theenumi}
+\end{enumerate}
+\begin{enumerate} [ 1) \upshape]
+    \setcounter{enumi}{\theenumTemp}
+    \item For some problems the tractability proof distinguishes between problem instances of treewidth $tw(G) \leq f(c)$ (where $c$ is some parameter associated with the problem and $f$ is a suitable function) and $tw(G) > f(c)$ and the respective proofs for the two cases are usually completely different.
+    \item As a special case of the previous, it may be possible to show that the problem is solvable in polynomial time for instances of bounded treewidth (as before) and that additionally all yes-instances of the problem necessarily have bounded treewidth $tw(G) \leq f(c)$ ($c$ is again some parameter associated with the problem and $f$ is a suitable function).
+    All instances of high treewidth are then trivially tractable since they are guaranteed to be no-instances.
+\end{enumerate}
+
+From the four illustrative example problems I found the m-Cycle Problem (mCP) and the Constraint Satisfaction Problem (CSP) to be the most interesting. 
+Unfortunately, the mCP is dealt with in a very concise manner, especially the proof of tractability for instances of large treewidth. 
+I could not at all understand the argument for why instances of treewidth larger than some suitable $t(m)$ must necessarily have a cycle whose length is a multiple of $m$.
+
+The mapping of graph 3-colorability (which I encountered in different lectures) to a CSP (which I do not know well) was interesting as I did not know that the former becomes tractable for instances of bounded treewidth. The most surprising result for me however was the following:
+
+\begin{theorem}
+ Deciding satisfiability for CSP instances of bounded treewidth is \emph{LOGCFL}-complete.
+\end{theorem}
+A quick check revealed that $\mathrm{LOGCFL} \subseteq \mathrm{NC}$, or, more precisely, $\mathrm{NC_1} \subseteq \mathrm{L} \subseteq \mathrm{NL} \subseteq \mathrm{LOGCFL} \subseteq \mathrm{NC_2} \subseteq \mathrm{NC}$. From a previous lecture I knew that NC is the class of problems that ``may be parallelized efficiently''\footnote{I.e., there are algorithms solving those problems that run on a PRAM in poly-logarithmic time using a polynomial amount of processors.} and that the Maximum Flow problem was most likely not in NC, since it is P-complete. It was very enlightening to see that the concept of treewidth allows for an efficient parallel algorithm for instances of an NP-hard problem with bounded treewidth.
+
+\bigskip
+\textbf{What I liked:} The paper is actually very readable since most of the required definitions and concepts are given. Some of the results were interesting and quite surprising for me: I did not know about the usefulness of treewidth before (I only knew it as a rather abstract concept); I found the idea of attacking practically relevant instances of problems that are NP-hard in general via parametrized complexity theory very intriguing; Courcelle's theorem was rather surprising for me. The example problems illustrate the basic idea of each of the given use cases of structural decomposition nicely.
+
+\textbf{What I did not like:} If one is not too familiar with the concept of treewidth, the notion of hypertree width is quite scary; especially since hypergraphs are \emph{not} introduced in the paper itself. Since they are only required for CSPs, it may have been worthwhile to find another example problem for case 1) that is easier to grasp for readers not all that proficient in theoretical  computer science.
+
+
+
+\end{document}
+
+
