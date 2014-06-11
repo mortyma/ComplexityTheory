@@ -1,0 +1,333 @@
+      \documentclass [11pt]{article}
+   \usepackage{latexsym}
+   \usepackage{amssymb}
+   \usepackage{amsthm}
+   \usepackage{amsmath}
+   \usepackage{url}
+   \usepackage{comment}
+   \usepackage{paralist}
+   
+   \textwidth      15cm
+   \textheight     23cm
+   \oddsidemargin 0.5cm
+   \topmargin    -0.5cm
+   \evensidemargin\oddsidemargin
+
+% \newcommand{\nop}[1]{#1}
+ \newcommand{\nop}[1]{}
+
+
+   \pagestyle{plain}
+   \bibliographystyle{plain}
+
+
+\title{Complexity Theory}
+\author{VU 181.142, SS 2014}
+\date{Homework Assignment 3}
+
+
+  \newtheorem{theorem}{Theorem}
+  \newtheorem{lemma}[theorem]{Lemma}
+  \newtheorem{exercise}{Exercise}
+  \newtheorem*{environment}{}
+
+  \newcommand{\ra}{\rightarrow}
+  \newcommand{\Ra}{\Rightarrow}
+  \newcommand{\La}{\Leftarrow}
+  \newcommand{\la}{\leftarrow}
+  \newcommand{\LR}{\Leftrightarrow}
+
+  \renewcommand{\phi}{\varphi}
+  \renewcommand{\theta}{\vartheta}
+
+
+\newcommand{\ccfont}[1]{\protect\mathsf{#1}}
+\newcommand{\NP}{\ccfont{NP}}
+\newcommand{\Ptime}{\ccfont{P}}
+\newcommand{\phs}[1]{\Sigma_{#1}\Ptime}
+\newcommand{\php}[1]{\Pi_{#1}\Ptime}
+\newcommand{\QSAT}[1]{\ccfont{QSAT}_{#1}}
+\newcommand{\MINSAT}{\mbox{\bf MINIMAL MODEL SAT}}
+\newcommand{\True}{\mathbf{true}}
+\newcommand{\False}{\mathbf{false}}
+
+\newcommand{\mJ}{\ensuremath{\mathcal{J}}}
+\newcommand{\mI}{\ensuremath{\mathcal{I}}}
+\newcommand{\mIp}{\ensuremath{\mathcal{I'}}}
+\newcommand{\mJp}{\ensuremath{\mathcal{J'}}}
+
+\renewcommand{\labelenumi}{(\alph{enumi})}
+
+\newcommand{\Qoddeven}{$Q$ is $\exists$ if $i$ is even and $\forall$ if $i$ is odd}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\maketitle
+
+\begin{tabbing}
+Submission Deadline: \quad \= \kill
+Name: \> Martin Kalany \\
+Matr-Nr: \> 0825673 \\
+Begin: \> 6 May, 2014  \\
+Submission Deadline: \>20 May, 2014  \\
+send to: \> \url{complexity@dbai.tuwien.ac.at}\\
+Maximum credits: \> 10 
+\end{tabbing}
+
+
+\medskip
+
+\noindent
+\begin{exercise}[5 credits]
+{\em 
+Recall the following characterizations of the complexity classes 
+$\phs{i}$ and $\php{i}$ for $i \geq 1$. 
+}%em
+
+
+\medskip
+
+\noindent
+{\bf Theorem.}
+\begin{itemize}
+\item Let $L$ be a language and $i \geq 1$. Then $L \in \phs{i}$ iff there is
+a polynomially balanced relation $R$ such that the language 
+$\{x\# y \mid (x,y) \in R\}$ is in $\php{i-1}$ and 
+\[
+L = \{x \mid \mbox{there exists a } y 
+\mbox{ with } |y| \leq |x|^k
+\mbox{ s.t. } (x,y) \in R\}
+\]
+
+
+\item Let $L$ be a language and $i \geq 1$. Then $L \in \php{i}$ iff there is
+a polynomially balanced relation $R$ such that the language 
+$\{x\# y \mid (x,y) \in R\}$ is in $\phs{i-1}$ and 
+\[
+L = \{x \mid \mbox{for all } y \mbox{ with } |y| \leq |x|^k, (x,y) \in R\}
+\]
+\end{itemize}
+
+
+\medskip
+
+\noindent
+{\bf Corollary.}
+%
+\begin{itemize}
+\item Let $L$ be a language and $i \geq 1$. Then $L \in \phs{i}$ iff there is
+a polynomially balanced, polynomial-time decidable $(i+1)$-ary
+relation $R$ such that 
+\[
+L = \{x \mid \exists y_1 \forall y_2\exists y_3\cdots Q y_i \mbox{ such
+that } 
+(x,y_1,\ldots,y_i) \in R\}
+\]
+where $Q$ is $\forall$ if $i$ is even and $\exists$ if $i$ is odd. 
+
+\item 
+Let $L$ be a language and $i \geq 1$. Then $L \in \php{i}$ iff there is
+a polynomially balanced, polynomial-time decidable $(i+1)$-ary
+relation $R$ such that 
+\[
+L = \{x \mid \forall y_1 \exists y_2\forall y_3\cdots Q y_i \mbox{ such
+that } 
+(x,y_1,\ldots,y_i) \in R\}
+\]
+where $Q$ is $\exists$ if $i$ is even and $\forall$ if $i$ is odd. 
+\end{itemize}
+
+
+
+
+\medskip
+\noindent
+{\em 
+Give a rigorous proof of this corollary.
+It suffices to prove the correctness of the characterization of 
+$\phs{i}$. The characterization of $\php{i}$ follows immediately.
+}%em
+\end{exercise}
+
+\noindent
+{\bf Hint.} Use the above theorem and proceed by induction on $i$.
+
+
+\bigskip
+\noindent
+\textbf{Solution:} 
+
+\noindent
+\textbf{Remark:} Whenever $Q$ is used, the intended meaning is: \Qoddeven.
+
+\medskip
+\noindent
+We proceed by induction on $i$:
+
+\noindent
+\emph{Base case i=1:} We have to show the following:
+
+\emph{Let L be a language and i = 1. Then,
+$ L \in \phs{1} \iff$ there is a polynomially balanced, polynomial-time decidable $2$-ary
+relation $R$ such that 
+\[
+L = \{x \mid \exists y_1 \mbox{ such
+that } 
+(x,y_1) \in R\}\quad .
+\]}
+
+``$\Rightarrow$'':
+Assume $L \in \phs{1}$. 
+By the above theorem, $L \in \phs{1} \implies$ there is a polynomially balanced relation R s.t.\ the language $L' = \{x\#y \mid (x,y) \in R\}$ is in $\php{0}$ and $L= \{x \mid \exists y \mbox{ with } |y| \leq |x|^k \mbox{ s.t. } (x,y) \in R\}$. 
+Since $\php{0} = \Ptime$, the language $L'$ and thus also R are decidable in polynomial time. The claim follows directly.
+
+``$\Leftarrow$'': Assume $R$ is a polynomially balanced, polynomial-time decidable 2-ary relation s.t.\ $L= \{x \mid \exists y \mbox{ s.t.\ } (x, y) \in R \}$. Since $R$ is polynomially balanced, $|y| \leq |x|^k$ holds. Then, the language $L' = \{x\#y \mid (x,y) \in R \}$ is decidable in polynomial time. Since $\php{0} = \Ptime$, we can apply the theorem for $i=1$ and conclude that  $L \in \phs{1}$.
+
+\noindent
+\emph{Induction hypothesis:}
+Assume that the corollary holds for $i$.
+
+\noindent
+\emph{Induction step:}
+We have to show that the corollary holds for $i+1$, using the hypothesis.
+
+``$\Rightarrow$'': Assume $L_{i+1} \in \phs{i+1}$.
+By the theorem, we get $L \in \phs{i+1} \implies$ there is a polynomially balanced relation $R'$  s.t.\ the language $L' = \{x\#y \mid (x,y) \in R' \}$ is in $\php{i}$ and $L =\{x \mid \exists y \mbox{ with } |y| \leq |x|^k \mbox{ s.t.\ } (x,y) \in R'\}$. 
+By the hypothesis, we get $L' \in \php{i} \implies $ there is a polynomially balanced, polynomial-time decidable $(i+1)$-ary relation $R''$ such that $L' = \{x' \mid \forall y'_1 \exists y'_2 \forall y'_3 \cdots Qy'_i \mbox { s.t.\ }(x', y'_1, \dots ,y'_i) \in R'' \}$. Note that $x' = x\#y$.
+We construct the polynomially balanced, polynomial-time decidable relation $R$ from $R''$ by splitting up $x'=x\#y$ as $R := (x, y, y_1, y_2, \dots y_i)$, where $\forall j$, $1\leq j \leq i: y_j = y'_j$.
+Obviously, $R$ is a $(i+2)$-ary relation. 
+$R''$ is polynomially balanced, and thus $|y_1|, |y_2|,\dots ,|y_i| \leq |x\#y|^{k''}$, for some $k'' \in \mathbb{N}$.
+Since $R'$ too is polynomially balanced, we further know that $|y| \leq |x|^{k'}$ (for some $k' \in \mathbb{N}$) and thus $|y|, |y_1|, |y_2|,\dots ,|y_i| \leq |x|^{k}$ (for some $k\in \mathbb{N}$), i.e., $R$ is polynomially balanced.
+$R$ is polynomial-time decidable; deciding whether $(x, y, y_1,\dots ,y_i) \in R$ can be done in polynomial time by checking whether $(x\#y, y_1,\dots ,y_i) \in R'$, since $R'$ is polynomial-time decidable. 
+Thus, for any $x \in L$ ($L \in \phs{i+1}$), we have constructed a polynomially balanced, polynomial-time decidable $(i+2)$-ary relation $R$ such that $L = \{x \mid \exists y \forall y_i \exists y_2\cdots Qy_i) \in R \}$.
+
+``$\Leftarrow$'': Assume $R $ is a polynomially balanced, polynomial-time decidable $(i+2)$-ary relation s.t.\ $L = \{x \mid \exists y_1 \forall y_2 \exists y_3 \cdots Q y_{i+1}\mbox{ such that } (x, y_1, \dots, y_{i+1}) \in R \}$.
+We construct a relation $R'$ and a language $L' = \{x' \mid \forall y'_1 \exists y'_2 \cdots Qy_i \mbox{ such that } (x',y'_1, \dots ,y'_i) \in R' \}$ by using $x':= x\#y_1$ and  $\forall j, 1\leq j \leq i: y'_j = y_{j+1}$. Clearly, $R'$ is a polynomially balanced and polynomial-time decidable $(i+1)$-ary relation. 
+It follows (by the hypothesis) that $L' \in \php{i}$.
+Note that $\forall x' \in L': x' = x\#y_1$.
+We construct another relation $R''$: $(x\#y_1) \in L' \implies (x, y_1) \in R''$ to get a different characterization of $L'$, namely $L' = \{x\#y \mid (x, y) \in R'' \}$.
+Again it is easy to see that $R''$ is polynomially balanced, since by $R$ being polynomially balanced we know that $|y_1| \leq |x|^k$ (for some $k\in \mathbb{N}$).
+By the corollary, we know that $\forall x\in L : \exists y_1 \forall y_2 \cdots Qy_{i+1}$ such that $(x, y_1, \dots ,y_i) \in R$ and thus $(x, y_1) \in R''$ by construction, i.e.,  the theorem is applicable: $R''$ is a polynomially balanced relation such that the language $L' = \{x\#y \mid (x, y) \in R'' \}$ is in $\php{i}$ and $L = \{x \mid \exists y \mbox{ s.t.\ } (x, y) \in R'' \} \implies L \in \phs{i+1}$, which concludes the proof.
+\qed
+
+\noindent
+\begin{exercise}[5 credits]
+{\em Recall the $\phs{2}$-hardness proof of \MINSAT\ by reduction from the $\QSAT{2}$-problem: 
+%
+Let an arbitrary instance of $\QSAT{i}$ be given by the 
+QBF
+%
+$$\psi = (\exists x_1, \dots, x_k) 
+(\forall y_1, \dots, y_\ell) \phi
+$$
+%
+%
+Now let $\{x'_1, \dots, x'_k, z\}$ be fresh propositional variables.
+Then we construct an instance of 
+\MINSAT\ by the {\em variable $z$} and the {\em formula} 
+%
+%\smallskip
+$$\chi =  
+\big(\bigwedge_{i=1}^n (\neg x_i \leftrightarrow x'_i) \big)
+\wedge \big( \neg \phi \vee (y_1 \wedge \dots 
+\wedge y_\ell \wedge z)\big)
+$$
+%
+Recall from the lecture that we have already proved the following 
+implication:  \\
+$\psi$ is $\True$ (in every interpretation) $\Ra$ $z$ is $\True$ in a minimal model of $\chi$.
+
+
+\smallskip
+\noindent
+Give a rigorous proof also of the opposite direction, i.e.: \\
+$z$ is $\True$ in a minimal model of $\chi$ 
+$\Ra$ $\psi$ is $\True$ (in every interpretation).
+} % em
+\end{exercise}
+
+
+\noindent
+{\bf Hint.} Let ${\cal J}$ be 
+a minimal model of $\chi$ and let 
+$z$ be $\True$ in ${\cal J}$. 
+\begin{itemize}
+\item First show that then 
+${\cal J} (y_j) = \True$ for every $j$.
+\item
+Second, let ${\cal I}$ be the truth assignment obtained by 
+restricting ${\cal J}$ to the variables 
+$\{x_1, \dots, x_k \}$. Show that (by the minimality of ${\cal J}$)
+${\cal I}$ is indeed a 
+partial assignment on $\{x_1, \dots, x_k\}$ s.t.\ for any values assigned to $\{y_1, \dots, y_\ell\}$, the formula $\phi$ is $\True$. 
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{Solution:}
+
+\begin{lemma}
+ Let ${\cal J}$ be a minimal model of $\chi$ and let $z$ be $\True$ in ${\cal J}$. Then, ${\cal J} (y_j) = \True$ for every $j$.
+\end{lemma}
+\begin{proof}
+By contradiction. Let 
+$$
+\chi' := \neg \phi \vee (y_1 \wedge \dots \wedge y_\ell \wedge z)
+$$
+be the second conjunct of the formula $\chi$. For $\mJ$ to be a model of $\chi$, $\chi'$ must evaluate to $\True$ under $\mJ$ and thus at least one of the disjuncts must evaluate to $\True$ under $\mJ$. If $\mJ(y_1 \wedge \dots \wedge y_\ell \wedge z) = \True$, the lemma follows immediately ($\mJ(z) = \True$ by assumption and every conjunct $y_i$ has to be $\True$ under $\mJ$). Otherwise, $\mJ(\neg \phi) = \True$ must hold. If this is the case, $\mJ$ is however not a minimal model of $\chi$ since we can construct a strictly smaller model $\mJp$ by
+$$
+\forall x \in Var(\chi), x\neq z: \mJp(x) := \mJ(x) \quad \mathrm{and} \quad \mJp(z) := \False \quad ,
+$$
+a contradiction to the assumption that $\mJ$ is a minimal model for $\chi$.
+\end{proof}
+
+\noindent
+\textbf{Notation.} For convenience, we use $\mI$ also as a shorthand notation for the set of variables that are $\True$ under $\mI$, i.e., 
+$$
+x \in \mI \iff \mI(x) = \True\ \quad .
+$$
+
+\begin{lemma}
+Let (as before) ${\cal J}$ be a minimal model of $\chi$ and let $z$ be $\True$ in ${\cal J}$.
+Furthermore, let ${\cal I}$ be the truth assignment obtained by restricting ${\cal J}$ to the variables 
+$\{x_1, \dots, x_k \}$. 
+Then, ${\cal I}$ is a partial assignment on $\{x_1, \dots, x_k\}$ s.t.\ for any values assigned to $\{y_1, \dots, y_\ell\}$, the formula $\phi$ is $\True$. 
+\end{lemma}
+\begin{proof}
+By contradiction. Assume that there is an assignment $\mIp$ for $\psi$ which is an extension of $\mI$ and for which $\mIp(\phi) = \False$ holds. 
+Note that $\forall x \in \{x_1, \dots , x_k \}: \mIp(x_i) = \mI(x_i) = \mJ(x_i)$. We further extend $\mIp$ by the same construction as in the lecture, that is 
+$$
+\mIp(x_i') := 
+\begin{cases}
+ \False &  \text{if}\ \mI(x_i) = \True \\
+ \True  &  \text{if}\ \mI(x_i) = \False
+\end{cases} \quad ,
+$$
+and thus we have $\mIp\left(\left(\bigwedge_{i=1}^n (\neg x_i \leftrightarrow x'_i) \right)\right) = \True$.
+Since $\mIp(\phi) = \False \iff \mIp(\neg \phi) = \True$, we conclude that $\mIp(\chi) = \True$, i.e., $\mIp$ is a model for $\chi$, regardless of the truth assignment for $z$. 
+
+Next, we show that $\mIp$ is a proper subset of $\mJ$:
+By construction we have 
+\begin{align*}
+\forall x_i, 1\leq i \leq k: (x_i \in \mIp \iff x_i \in \mJ) \land (x_i' \in \mIp \iff x_i' \in \mJ) \quad ,
+\end{align*}
+(i.e., exactly the same $x_i$ are in $\mJ$ and $\mIp$) while 
+\begin{align*}
+\forall y_i, 1\leq i \leq l: y_i \in \mJ \land (y_i \in \mIp \lor y_i \not \in \mIp)
+\end{align*}
+(i.e., all $y_i$ are in $\mJ$ but not necessarily in $\mIp$) as well as
+\begin{align*}
+ z \in \mJ \quad , \quad z \not \in \mIp \quad .
+\end{align*}
+By construction, $\mIp \setminus \mJ = \{\}$, implying that $\mIp \subset \mJ$, which is a contradiction to the assumption that $\mJ$ is minimal.
+
+\end{proof}
+
+
+
+\end{document}
+
+

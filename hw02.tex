@@ -1,0 +1,587 @@
+   \documentclass [11pt]{article}
+   \usepackage{latexsym}
+   \usepackage{amssymb}
+   \usepackage{url}
+   \usepackage{amsmath}
+   \usepackage{amsthm}
+   \usepackage{comment}
+   \usepackage{paralist}
+
+   \textwidth      15cm
+   \textheight     23cm
+   \oddsidemargin 0.5cm
+   \topmargin    -0.5cm
+   \evensidemargin\oddsidemargin
+
+
+   \pagestyle{plain}
+   \bibliographystyle{plain}
+
+
+\title{Complexity Theory}
+\author{VU 181.142, SS 2014}
+\date{Homework Assignment 2}
+
+
+  \newtheorem{theorem}{Theorem}
+  \newtheorem{lemma}[theorem]{Lemma}
+  \newtheorem{corollary}[theorem]{Corollary}
+  \newtheorem{proposition}[theorem]{Proposition}
+  \newtheorem{conjecture}[theorem]{Conjecture}
+  \newtheorem{definition}[theorem]{Definition}
+  \newtheorem{example}[theorem]{Example}
+  \newtheorem{remark}[theorem]{Remark}
+  \newtheorem{exercise}[theorem]{Exercise}
+  \newtheorem{claim}{Claim}
+
+  \newcommand{\ra}{\rightarrow}
+  \newcommand{\Ra}{\Rightarrow}
+  \newcommand{\La}{\Leftarrow}
+  \newcommand{\la}{\leftarrow}
+  \newcommand{\LR}{\Leftrightarrow}
+
+  \renewcommand{\phi}{\varphi}
+  \renewcommand{\theta}{\vartheta}
+
+
+\newcommand{\bigO}{\mathrm{O}}
+\newcommand{\bigOmega}{\Omega}
+\newcommand{\bigTheta}{\Theta}
+\newcommand{\tuple}[1]{\langle#1\rangle}
+
+%%% useful macros for Turing machines:
+\newcommand{\blank}{\sqcup}
+\newcommand{\ssym}{\triangleright}
+\newcommand{\esym}{\triangleleft}
+\newcommand{\halt}{\mbox{h}}
+\newcommand{\yess}{\mbox{``yes''}}
+\newcommand{\nos}{\mbox{``no''}}
+\newcommand{\lmove}{\leftarrow}
+\newcommand{\rmove}{\rightarrow}
+\newcommand{\stay}{-}
+\newcommand{\diverge}{\nearrow}
+\newcommand{\yields}[1]{\stackrel{#1}{\rightarrow}}
+
+\newcommand{\HALTING}{\mbox{\bf HALTING}}
+
+\newcommand{\ccfont}[1]{\protect\mathsf{#1}}
+\newcommand{\NP}{\ccfont{NP}}
+\newcommand{\SAT}{\mbox{\bf SAT}}
+\newcommand{\sym}[3]{\textit{symbol}_{#1}[#2,#3]}
+\newcommand{\cursor}[2]{\textit{cursor}[#1,#2]}
+\newcommand{\state}[2]{\textit{state}_{#1}[#2]}
+\newcommand{\accept}{\textit{accept}}
+\newcommand{\naccept}{\textit{naccept}}
+\newcommand{\conf}{\textit{conf}}
+
+%some macros for convenience
+\newcommand{\conft}{\ensuremath{\conf_{\tau}}}
+\newcommand{\pt}{\ensuremath{\pi_{\tau}}}
+\newcommand{\qt}{\ensuremath{q_{\tau}}}
+\newcommand{\wt}{\ensuremath{w_{\tau}}}
+\newcommand{\ut}{\ensuremath{u_{\tau}}}
+
+\newcommand{\lqm}{\text{`}}
+\newcommand{\rqm}{\text{'}}
+\renewcommand{\labelenumi}{(\alph{enumi})}
+
+\DeclareMathOperator{\FF}{\mathcal{F}}
+\DeclareMathOperator{\RR}{\mathcal{R}}
+\DeclareMathOperator{\GG}{\mathcal{G}}
+\DeclareMathOperator{\II}{\mathcal{I}}
+\DeclareMathOperator{\MM}{\mathcal{M}}
+
+\newcommand{\FRm}{\ensuremath{\FF \cup \RR \models}}
+\newcommand{\FRnm}{\ensuremath{\FF \cup \RR \not \models}}
+
+\newcommand{\True}{\mathbf{true}}
+\newcommand{\False}{\mathbf{false}}
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+% within an align* environment, number and label the equation. #1 is the 
+%label text to be appended to eqn:
+\newcommand\neqn[1]{\numberthis\label{eqn:#1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\maketitle
+
+\begin{tabbing}
+Submission Deadline: \quad \= \kill
+Name: \> Martin Kalany \\
+Matr-Nr: \> 0825673 \\
+Begin: \> 25 March, 2014  \\
+Submission Deadline: \>8 April, 2014 \\
+send to: \> \url{complexity@dbai.tuwien.ac.at}\\
+Maximum credits: \> 10 
+\end{tabbing}
+
+\medskip
+
+\noindent
+\begin{exercise}[5 credits]
+{\em Recall the problem reduction from an arbitrary language $L \in \NP$ 
+to the \SAT-problem given in the lecture. 
+In particular, recall the construction of an instance $R(x)$ of
+\SAT\ from an arbitrary instance $x$ of $L$.
+Give a rigorous proof of the correctness of this reduction, i.e.
+$x \in L \LR R(x) \in \SAT$.
+} % em
+\end{exercise}
+
+
+\noindent
+{\bf Hint.} Prove both directions of the equivalence separately. 
+The intended meaning of
+the propositional atoms in $R(x)$ is clear. You have to be careful, what is given, what is constructed (or defined), and what has to be proved. 
+
+\begin{enumerate}
+\item Suppose that $x \in L$. 
+\begin{itemize}
+\item given: Then we know that there exists a successful computation of the NTM $T$ on input $x$. By our assumption, this computation consists of exactly $N$ steps. Let $\conf_0, \dots, \conf_N$ denote the configurations of the NTM $T$ along this computation.
+\item constructed/defined:  We define a truth assignment ${\cal I}$ appropriate to $R(x)$ according to the intended meaning of the propositional atoms in $R(x)$. 
+\item to be proved: It remains to show that all conjuncts in $R(x)$ are indeed satisfied by ${\cal I}$. For this purpose, you have to inspect all groups of conjuncts in $R(x)$ and argue that each of them is true in ${\cal I}$.
+\end{itemize}
+
+\item Suppose that $R(x) \in \SAT$.
+\begin{itemize}
+\item given: Then there exists a satisfying truth assignment ${\cal I}$ of $R(x)$. 
+\item constructed/defined: We can construct a sequence $\conf_0, \dots, \conf_N$ of configurations 
+of the NTM $T$ according to the intended meaning of the propositional atoms in $R(x)$. 
+\item to be proved: First argue that the configurations $\conf_0, \dots, \conf_N$ are well-defined (by using the the fact that ${\cal I}$ satisfies all conjuncts of $R(x)$).
+
+It remains to show that there exists a computation of $T$ on input $x$ which produces exactly this sequence of configurations $\conf_0, \dots, \conf_N$. Note that, in particular, this is a successful computation by the conjunct $\state{s_m}{N}$
+(with $s_m  = \yess$) in $R(x)$ and by the intended meaning of $\state{s_m}{N}$.
+For this purpose, you have to  show by induction on $\tau$ that there exists 
+a computation of $T$ on input $x$ whose first $\tau$ 
+configurations are $\conf_0, \dots, \conf_\tau$.
+
+\end{itemize}
+
+
+\end{enumerate}
+
+
+
+\noindent
+{\bf For your convenience.} The groups of conjuncts in $R(x)$ are recalled below.
+
+\smallskip
+\noindent
+{\bf 1. Initialization facts.} \\
+$\sym{\ssym}{0}{0}$  \\
+$\sym{\sigma}{0}{\pi}$
+  \quad\quad for $1\leq \pi \leq |x|$, where $x_\pi=\sigma$ \\
+$\sym{\blank}{0}{\pi}$
+  \quad\quad for $|x| < \pi\leq N$ \\
+$\cursor{0}{0}$\\
+$\state{s_0}{0}$
+
+\smallskip
+\noindent
+{\bf 2. Transition rules.} For each pair $(s,\sigma)$ of state $s$ and symbol $\sigma$ let $\tuple{s,\sigma,s'_1,\sigma'_1,d_1}$, \dots, 
+$\tuple{s,\sigma,s'_k,\sigma'_k,d_k}$ denote all possible transitions according
+to the  transition relation $\Delta$ (for the cursor movements, we write $d_i \in \{-1,0,1\}$ rather than $d_i \in \{\lmove,\stay,\rmove\}$).
+ \\
+Then $R(x)$ contains the 
+following conjuncts for each value of $\tau$ and $\pi$ such that $0\leq \tau<N$ and $0
+\leq \pi < N$
+
+\smallskip
+\noindent
+%
+$\state{s}{\tau} \wedge \sym{\sigma}{\tau}{\pi} \wedge \cursor{\tau}{\pi}$
+$\ra$ \\ 
+\mbox{}\ \  $[({\state{s'_1}{\tau+1}}\wedge 
+\sym{\sigma'_1}{\tau+1}{\pi} \wedge {\cursor{\tau+1}{\pi+d_1}} 
+) \vee \dots \vee $ \\
+\mbox{}\ \  $({\state{s'_k}{\tau+1}} \wedge 
+\sym{\sigma'_k}{\tau+1}{\pi} \wedge {\cursor{\tau+1}{\pi+d_k}} 
+) ] $ 
+
+
+\smallskip
+\noindent
+{\bf 3. Uniqueness constraints.} Let 
+$K = \{s_0, \dots, s_m\}$ and
+$\Sigma = \{\sigma_1, \dots, \sigma_n\}$. \\
+Then $R(x)$ contains the following formulae for each value of $\tau$ and $\pi$ such that $0\leq \tau \leq N$, $0 \leq \pi \leq  N$, 
+$0 \leq i \leq m$, and $1 \leq j \leq n$.
+
+\smallskip
+\noindent
+$\state{s_i}{\tau} \leftrightarrow
+(\neg \state{s_0}{\tau} \wedge \dots \wedge 
+\neg \state{s_{i-1}}{\tau} \wedge \mbox{}$ \\
+\mbox{} \quad \ $\mbox{}\wedge \neg \state{s_{i+1}}{\tau} \wedge \dots \wedge 
+\neg \state{s_{m}}{\tau})$
+
+\noindent
+$\cursor{\tau}{\pi} \leftrightarrow
+(\neg \cursor{\tau}{0} \wedge \dots \wedge \neg \cursor{\tau}{\pi - 1} 
+\wedge \mbox{}$ \\
+\mbox{} \quad \ $\mbox{}\wedge 
+\neg \cursor{\tau}{\pi+1} \wedge \dots \wedge \neg \cursor{\tau}{N}$ 
+
+
+\noindent
+$\sym{\sigma_j}{\tau}{\pi} \leftrightarrow
+(\neg \sym{\sigma_1}{\tau}{\pi} \wedge \dots \wedge
+\neg \sym{\sigma_{j-1}}{\tau}{\pi} \wedge \mbox{}$ \\
+\mbox{} \quad \ $\mbox{}\wedge 
+\neg \sym{\sigma_{j+1}}{\tau}{\pi} \wedge \dots \wedge
+\neg \sym{\sigma_{n}}{\tau}{\pi}$
+
+
+\smallskip 
+\noindent
+{\bf 4. Inertia rules.} 
+$R(x)$ contains the
+following conjuncts for each value $\tau, \pi, \pi', \sigma$,
+where $0 \leq \tau < N$, $0 \leq \pi < \pi' \leq N$, and
+$\sigma \in \Sigma$, 
+
+
+\smallskip 
+
+\noindent
+$\sym{\sigma}{\tau}{\pi}, \cursor{\tau}{\pi'} \ra 
+\sym{\sigma}{\tau+1}{\pi}$
+
+\noindent
+$\sym{\sigma}{\tau}{\pi'}, \cursor{\tau}{\pi} \ra 
+\sym{\sigma}{\tau+1}{\pi'}$
+
+
+\smallskip 
+\noindent
+{\bf 5. Acceptance.} 
+Let $s_m = \yess$. \\
+Then  $R(x)$ contains the following atom as a conjunct:
+
+\smallskip
+
+\noindent
+$\state{s_m}{N})$.
+
+
+
+\bigskip
+
+\noindent
+\textbf{Defintions:}
+We define a configuration of the 1-string $T$ as a four-tuple $\conf_{\tau} := (\qt , \pt , \wt, \ut)$, where $\qt$ is the state, $\pt$ is the cursor position, $\wt$ is the contents of the tape up to and including the cursor position $\pt$ and $\ut$ is the contents of the tape after the cursor position $i$, each at time $\tau$. 
+If $u$ and $w$ are strings, we define
+\begin{itemize}
+ \item the concatination as $w+u$,
+ \item the size of of a string as $|w|$
+ \item and the $[\;]$ operator s.t.~for $0\leq i < |w|$, $w[i]$ is the symbol at the $i$-th position of $w$; and for $i \geq |w|$, $w[i] = \blank$.
+\end{itemize}
+We use single quotation marks to enclose the contents of a string, e.g., $\wt=\lqm \ssym$foo\rqm.
+We refer to a parameter of a configuration $\conft = (\qt, \pt, \wt, \ut)$ by simply using $\qt$, $\pt$, $\wt$ and $\ut$.
+
+\medskip
+
+\begin{proof}[Proof of (a):]
+We construct a truth assignment $\II$ appropriate to $R(x)$ as follows:
+\begin{align*}
+\II(\state{s}{\tau}) &:=  
+  \begin{cases}
+    \True  & \text{if } \qt = s\\
+    \False & \text{otherwise}
+  \end{cases} \neqn{defState}\\
+\II(\cursor{\tau}{\pi}) &:= 
+  \begin{cases}
+    \True & \text{if } \pt = \pi\\
+    \False & \text{otherwise}
+  \end{cases}\neqn{defCursor}\\
+\II(\sym{\sigma}{\tau}{\pi}) &:=
+  \begin{cases}
+    \True & \text{if } \sigma = (\wt+\ut)[\pi]\\
+    \False & \text{otherwise}
+  \end{cases} \neqn{defSym}
+\end{align*}
+and show that all conjuncts in $R(x)$ are satisfied by $\II$:
+
+\medskip
+\noindent
+{\bf 1. Initialization facts.} 
+Note that for $\tau = 0$ we have the configuration 
+\begin{align*}
+\conf_0 = (q_0=s_0, \pi_0=0, w_0=\lqm\ssym\rqm, u_0=x) \quad ,\neqn{conf0}
+\end{align*}
+where $s_0$ denotes the initial state of $T$. In the following, we formally show that all the initialization facts hold; it is actually quite easy to see that from the above construction of $\II$.
+
+\begin{compactitem}
+\item $\sym{\ssym}{0}{0}$: Using $\tau=0$, $\pi=0$ and the state of $T$ given in Eq.~\ref{eqn:conf0}, we get $(w_0+u_0)[0] = \lqm\ssym x \rqm[0] = \lqm\ssym\rqm$ and thus, by the construction of $\II$ (Eq.~\ref{eqn:defSym}), $\II(\sym{\ssym}{0}{0}) = \True$.
+\item $\sym{\sigma}{0}{\pi}$, for $1\leq \pi \leq |x|$, where\footnote{Note that the range of the index for the $[\;]$ operator is $0$ to $|x|-1$, while it is $1$ to $|x|$ when used as a subscript; i.e., $x[i]=x_{i+1}$.} $x_\pi=\sigma$: Since $(w_0+u_0)[\pi] = (\lqm\ssym\rqm + x)[\pi] = x[\pi-1] = x_{\pi}$, we get (by Eq.~\ref{eqn:defSym}) that $\II(\sym{\sigma}{0}{\pi}) = \True$, for $1\leq \pi \leq |x|$.
+\item $\sym{\blank}{0}{\pi}$, for $|x| < \pi\leq N$: Since $|(w_0+u_0)| = |(\lqm\ssym\rqm + x)| = 1 + |x|$, we get that $(w_0+u_0)[\pi] = x[\pi-1] =  \blank$, and thus, by Eq.~\ref{eqn:defSym}, $\II(\sym{\blank}{0}{\pi})=\True$ for $|x| < \pi\leq N$.
+\item $\cursor{0}{0}$: Since $\pi_0 = 0$, the construction of $\II$ (Eq.~\ref{eqn:defCursor}) immediately gives that $\II(\cursor{0}{0}) = \True$.
+\item $\state{s_0}{0}$: Since $q_0 = s_0$, by construction of $\II$ (Eq.~\ref{eqn:defState}), we immediately get that $\II(\state{s_0}{0}) = \True$.
+\end{compactitem}
+
+\smallskip
+\noindent
+{\bf 2. Transition rules.} We have to show that $\forall 0\leq \tau<N, 0\leq \pi < N, s\in K,  \sigma \in \Sigma$,
+\begin{align*}
+\phi(\tau, \pi, s, \sigma)& := \\
+\state{s}{\tau}& \wedge \sym{\sigma}{\tau}{\pi} \wedge \cursor{\tau}{\pi} \ra  \\
+&[({\state{s'_1}{\tau+1}}\wedge \sym{\sigma'_1}{\tau+1}{\pi} \wedge {\cursor{\tau+1}{\pi+d_1}} ) \vee \dots \vee \\
+&({\state{s'_k}{\tau+1}} \wedge \sym{\sigma'_k}{\tau+1}{\pi} \wedge {\cursor{\tau+1}{\pi+d_k}} ) ] 
+\neqn{transRules}
+\end{align*}
+evaluates to true under $\II$.
+Let
+\begin{align*}
+ \conf_\tau = (\qt, \pt, \wt, \ut) \quad ,  \quad \conf_{\tau+1} = (q_{\tau+1}, \pi_{\tau+1}, w_{\tau+1}, u_{\tau+1})
+\end{align*}
+be the configurations of $T$ at time $\tau$ and $\tau+1$, respectively. 
+For given $\tau$, $0\leq \tau<N$, we have
+\begin{align*}
+s=\qt &\iff \II(\state{s}{\tau}) = \True \\
+\pi=\pt &\iff \II(\cursor{\tau}{\pi}) = \True \\ 
+\sigma=\wt[\pi] &\iff \II(\sym{\sigma}{\tau}{\pi}) = \True,
+\end{align*}
+i.e., for all $\phi(\tau, \pi=\pt, s=\qt, \sigma = \wt[\pi])=:\phi_{\tau}$ the antecedent evalutes to true.
+Note that if one of the parameters deviates, the antecedent of $\phi$ can not be true under $\II$.
+It remains to show that if the antecedent evaluates to true, so does the consequent.
+By the assumption, we know that a configuration $\conf_{\tau+1}$ exists which is the immediate successor of $\conft$, i.e., there is a transition $\delta = (\qt, \wt[\pt], q_{\tau+1}, w_{\tau+1}[\pt + d], d)\in \Delta$ that was used to construct a clause $c_i = {\state{s'_i}{\tau+1}}\wedge \sym{\sigma'_i}{\tau+1}{\pi} \wedge {\cursor{\tau+1}{\pi+d_i}}$ where
+$s'_i=q_{\tau+1}$, $\sigma'_i=w_{\tau+1}[\pt + d]$, $d_i = d$ and $c_i \in \phi_{\tau}$.
+It is easy to see that $\II(c_i) = \True$ (by analogous reasons as for the initialization rules), thus $\II(\phi_{\tau}) = \True$ for all $\tau$, which implies that all conjuncts given in Eq.~\ref{eqn:transRules} are true under $\II$.
+
+\smallskip
+\noindent
+{\bf 3. Uniqueness constraints.} 
+We have to show that Equations ~\ref{eqn:uniqueState}-\ref{eqn:uniqueSym} evaluate to true under assignment $\II$ $\forall (i, j, \tau, \pi) \in [0\dots m]\times[0\dots n]\times[0\dots N]\times[0\dots N]$:
+\begin{align*}
+s(\tau, i) := \state{s_i}{\tau} \leftrightarrow &(\neg \state{s_0}{\tau} \wedge \dots \wedge \neg \state{s_{i-1}}{\tau} \wedge \\
+&\wedge \neg \state{s_{i+1}}{\tau} \wedge \dots \wedge \neg \state{s_{m}}{\tau}) \neqn{uniqueState}
+\end{align*}
+For any $\tau$, $\II(\state{s_i}{\tau}) = \True \iff s_i = \qt$ (by definition in Eq.~\ref{eqn:defState}), and since the states of a turing machine are pairwise distinct by definition, $\II(\state{s_i}{\tau}) = \False \iff s_i \neq \qt$ which implies $\II(s(\tau, i)) = \True$ $\forall \tau, i$.     
+\begin{align*}
+c(\tau, \pi) := \cursor{\tau}{\pi} \leftrightarrow & (\neg \cursor{\tau}{0} \wedge \dots \wedge \neg \cursor{\tau}{\pi - 1} \wedge \\
+&\wedge \neg \cursor{\tau}{\pi+1} \wedge \dots \wedge \neg \cursor{\tau}{N}
+ \neqn{uniqueCursor}
+\end{align*}
+Analogous to the above: For any $\tau$, $\II(\cursor{\tau}{\pi}) = \True \iff \pi = \pt$ (by definition in Eq.~\ref{eqn:defCursor}), and since at any time step the cursor is exactly at one position (by definition of a turing machine), $\II(\cursor{\tau}{\pi}) = \False \iff \pi \neq \pt$ which implies $\II(c(\tau, \pi)) = \True$ $\forall \tau, \pi$.  
+\begin{align*}
+s(\tau, \pi, j) := \sym{\sigma_j}{\tau}{\pi} \leftrightarrow & (\neg \sym{\sigma_1}{\tau}{\pi} \wedge \dots \wedge \neg \sym{\sigma_{j-1}}{\tau}{\pi} \wedge \\
+& \wedge \neg \sym{\sigma_{j+1}}{\tau}{\pi} \wedge \dots \wedge \neg \sym{\sigma_{n}}{\tau}{\pi}
+ \neqn{uniqueSym}
+\end{align*}
+For any $\tau$ and $\pi$, $\II(\sym{\sigma_j}{\tau}{\pi}) = \True \iff \sigma_j = (\wt+\ut)[\pi]$ (by definition in Eq.~\ref{eqn:defSym}), and since exactly one symbol is on the tape at a given position and a given time step (by definition of a turing machine), $\II(\sym{\sigma_j}{\tau}{\pi}) = \False \iff \sigma_j \neq (\wt+\ut)[\pi]$ which implies $\II(s(\tau, \pi, j)) = \True$ $\forall \tau, \pi, j$.  
+
+\smallskip 
+\noindent
+{\bf 4. Inertia rules.} 
+We have to show that $\forall \tau, \pi, \pi', \sigma \in \Sigma$,
+where $0 \leq \tau < N$, $0 \leq \pi < \pi' \leq N$, the following formulae evaluate to true under $\II$:
+\begin{align*}
+\sym{\sigma}{\tau}{\pi} \land \cursor{\tau}{\pi'} \ra \sym{\sigma}{\tau+1}{\pi}
+\neqn{insertiaRules1} \\
+\sym{\sigma}{\tau}{\pi'} \land \cursor{\tau}{\pi} \ra  \sym{\sigma}{\tau+1}{\pi'}
+\neqn{insertiaRules2}
+\end{align*}
+We simplify to $\forall \tau, \pi, \pi', \sigma \in \Sigma$,
+where $0 \leq \tau < N$, $0 \leq \pi, \pi' \leq N$, $\pi\neq \pi'$:
+\begin{align*}
+\sym{\sigma}{\tau}{\pi} \land \cursor{\tau}{\pi'} \ra \sym{\sigma}{\tau+1}{\pi}
+\neqn{insertiaRules} 
+\end{align*}
+By contradiction: assume Eq.~\ref{eqn:insertiaRules} evaluates to false under $\II$ for some $\sigma$, $\pi$, $\pi'$ and $\tau$.
+This implies that at time $\tau$, the symbol on position $\pi$ of the tape is $\sigma$ and that the cursor is at position $\pi'$; otherwise, the antecedent can not evaluate to true. 
+Since the consquent needs to evalute to false in order for the whole equation to evaluate to false, the symbol at position $\pi$ at time $\tau+1$ must not be equal to $\sigma$, i.e., it has to be changed by the transition relation between time steps $\tau$ and $\tau+1$. 
+This is a contradiction, since at time $\tau$ the cursor is at position $\pi' \neq \pi$ and, by definition, a turing machine may change the symbol under the current cursor position only.
+
+\smallskip 
+\noindent
+{\bf 5. Acceptance.} 
+Since $conf_N = (q_N, \pi_N, w_N, u_N)$ is the final configuration of a successful computation of $T$ we have that $q_N = s_m$ and thus (by Eq.~\ref{eqn:defState}) $\II(\state{s_m}{N}) = \True$.
+
+\bigskip
+\noindent
+We have thus shown that all the conjuncts in $R(x)$ evaluate to true under assignment $\II$ as constructed in Equations~\ref{eqn:defState}-\ref{eqn:defSym}.
+\end{proof}
+
+
+\begin{proof}[Proof of (b):]
+\begin{comment}
+\emph{Outline:} Using the initialization facts and uniqueness constraints, we first show that $\conf_0$ is well defined. 
+Next, we apply the transition rules and inertia rules (again together with the uniqueness constraints) to show that $conf_1$ is well defined and a valid successor configuration (i.e., it is possible for $T$ to transition from $conf_0$ to $conf_1$ by applying exactly one transition from $\Delta$.). 
+We then show by induction that there exists a successful computation of $T$ on input $x$ whose frist $\tau$ configuration are $conf_0,\dots ,\conft$.
+\end{comment}
+\begin{claim}
+For any $\tau$, $0\leq \tau \leq N$, $\conft$ is well defined.
+\end{claim}
+
+\noindent
+The assignment already states that since $\II$ is a satisfying truth assignment of $R(x)$, all the conjucnts of $R(x)$ are true under $\II$; in particular, this includes all the initialization facts and thus we can construct the configuration
+\begin{align*}
+ conf_0 := (s_0, 0, \lqm \ssym \rqm, u_0)
+\end{align*}
+with $u[\pi] = x[\pi]$ for $0 \leq \pi < |x|$ and $u[\pi] = \blank$ for $|x| \leq \pi \leq N$, which is a valid start configuration of $T$ (cursor on position 0 due to $\II(\cursor{0}{0} = \True$; content of the tape is the starting symbol following by the input followed by blanks due to $\II(\sym{\ssym}{0}{0}) = \True$, $\II(\sym{\sigma}{0}{\pi}) = \True$ for $ 1 \leq \pi \leq |x|$ and $\II(\sym{\blank}{0}{\pi}) =\True$ for $|x| < \pi \leq N$; $T$ is in the starting state due to $\II(\state{s_0}{0}) = \True$).
+
+By the uniqueness constraints we get that for any $\tau$, $0\leq \tau \leq N$, state and cursor position are unique; additionally, for any $\pi$, $0\leq \pi \leq N$, the symbol on position $\pi$ of the tape is unique and thus $\conf_\tau$ is well defined. 
+
+\begin{claim}
+There exists a successful computation of $T$ on input $x$ whose frist $\tau$ configurations are $conf_0,\dots ,\conft$.
+\end{claim}
+
+\noindent
+We proceed by induction on $\tau$: 
+The \emph{base case}, i.e., $\tau=0$, has already been shown above.
+
+\noindent
+\emph{Induction hypothesis:} Assume that the claim is true for $0\leq \tau < N$, i.e., there is a computation of $T$ on input $x$ whose first $\tau$ configurations are $conf_0\dots \conft$; in particular, let
+\begin{align*}
+\conft = (\qt, \pt, \wt, \ut) \quad .
+\end{align*}
+
+\noindent
+\emph{Induction step:} We now show that the claim holds for $\tau+1$, using the hypothesis: By the reduction,
+\begin{align*}
+ \II(\state{\qt}{\tau}\land \sym{\sigma}{\pt}{\tau} \land \cursor{\tau}{\pt}) = \True
+\end{align*}
+with $\sigma = \wt[\pt]$, i.e., there is a transition rule for which the antecedent is true under $\II$ and thus the consequent is too (otherwise, $\II$ cannot be a satisfying truth assignment of $R(x)$).
+This implies that for some $i$, $0 \leq i \leq k$,
+\begin{align*}
+ \II({\state{s'_i}{\tau+1}}\wedge 
+\sym{\sigma'_i}{\tau+1}{\pt} \wedge {\cursor{\tau+1}{\pt+d_i}}) = \True \quad ,
+\end{align*}
+which means that the cursor has moved at most one position to the left or right (given by $d_i$) and at time $\tau+1$ the symbol at position $\pt$ is $\sigma'_i$ and $T$ is in state $s'_i$.
+By the inertia rules we get that at time $\tau$ only the symbol at position $\pt$ may be changed and thus $\forall 0 \leq \pi \leq N, \pi \neq \pt: (w_{\tau+1} + u_{\tau+1})[\pi] = (\wt + \ut)[\pi]$ and $(w_{\tau+1} + u_{tau+1})[\pt] = \sigma'_i$.
+We have already shown above that, for any $\tau$, $0\leq \tau \leq N$, state and cursor position as well as the symbol on position $\pi$ are unique for all $\pi$.
+It follows that the claim holds for $\tau+1$, with
+\begin{align*}
+ conf_{\tau+1} = (s'_i, \pt+d_i, w_{\tau+1}, u_{\tau+1}) \quad .
+\end{align*}
+
+It remains to show that the computation ends in the accepting state.
+ $\II(\state{s_m}{N}) = \True$ and $\conf_N=(q_N, \pi_N, w_N, u_N)$ being well defined implies that $q_N = s_m$, which is the accepting state. 
+ Thus, we have shown that if $R(x)$ is satisfiable, $T$ on input $x$ produces the sequence of configurations $conf_0\dots \conf_N$ and terminates with ``yes''.
+
+
+\end{proof}
+
+
+\bigskip
+
+
+\noindent
+\begin{exercise}[5 credits]
+{\em 
+Recall the basic, polynomial-time decision procedure for HORNSAT (see cc04.pdf).
+The correctness of this decision procedure 
+relies on the following lemma:
+}%em
+
+\medskip
+
+\noindent
+{\bf Lemma.}
+Let $\phi$ be a propositional Horn-formula. Let 
+$Y$ denote the set of atoms which are obtained by 
+initializing $Y$ to the set of facts in $\phi$ and by 
+exhaustively applying the rules in $\phi$ to $Y$.
+Then, for every atom $x$ in $\phi$, the following equivalence holds: 
+%
+$x \in Y$ $\LR$ 
+$x$ is implied by the facts and rules in $\phi$.
+
+\medskip
+\noindent
+{\em 
+Give a rigorous proof of this lemma.
+}%em
+\end{exercise}
+
+\noindent
+\textbf{Definitions and observations:} Let $\FF$ (resp.~$\RR$, $\GG$) be the set of clauses $c$ of $\phi$ that are of the form of facts (resp.~rules, goals).
+Let $f=|\FF|=Var(\FF)$ be the number of facts and $r=|\RR|$ be the number of rules.
+Let $\psi$ be an arbitrary propositional formula, $W$ be a set of propositional formulae and $\II$ be an interpretation. We define $\MM(\psi)$ as the set of all models of $\psi$, that is, $\forall \II \in \MM(\psi): \II(\psi) = \True$.
+We expand the definition of the \emph{logical entailment} operator so that the antecedent may consist of a set of formulae\footnote{The slides use the operator only with one truth assignment $T$ (e.g., $T\models \phi$). Our definition follows the one in ``Formal Methods: (Block 2) Satisfiability Problems, 1. Preparatory Concepts''.} as
+\begin{align*}
+W \models \psi \iff \MM(W) \subseteq \MM(\psi) \iff \forall I \in \MM(W): I \models \psi \quad .
+\end{align*}
+For any $x \in Var(\phi)$, we define $\FRm x$ to mean ``$x$ is implied by the facts and rules in $\phi$'' and note that
+\begin{align*}
+\FRm x \iff & x \in Var(\FF) \lor \\
+	    &\exists (c=\neg q_1 \lor \dots \lor \neg q_k \lor x)\in \RR: \forall q_i: \FRm q_i \quad . \neqn{defFRm}
+\end{align*}
+
+\noindent
+We observe that the set $Y$ (set of variables that are logically implied by the facts and rules in $\phi$) grows strictly monotonically by 1 element each time the ``immediate consequence operator'' is applied. 
+Assuming that the computation of $Y$ terminates in finitly many steps\footnote{We do not prove this formally here; but since this computation is used in the polynomial-time decision procedure for HORN-SAT, this has neccessarily to be true.}, we get that $Y$ is a finite set. 
+Let $m$ be the number of steps and observe that $m\leq r$, since each step (the application of the immediate consequence operator) requires a rule and each rule is used at most once.
+
+Let $Y_0 = Var(\FF)$ and $Y_i$ be this set after the $i$-th application of the operator for $0\leq i \leq m$.
+Then, $|Y_{i+1}| = |Y_i| + 1$ and $Y_{i+1} \setminus Y_i = \{p\}$ for some variable $p$ s.t.~$\exists (c=\neg q_1 \lor \dots \lor \neg q_k \lor p)\in \RR \land \forall q_i:q_i \in Y_i$ (by the definition of the immediate consequence operator).
+Observe that $|Y_0| = f$ and $|Y_m| = f + m$. 
+
+We eliminate the non-determinism introduced by the second step of the computation of $Y$ (``If there exists a rule...'') by assuming, w.l.o.g., a fixed ordering of the rules (i.e., $\forall 0\leq i<j < |\RR|:$ if both the rules $c_i$ and $c_j$ are useable in the next application of the immediate consequence operator, we assume the algorithm chooses $c_i$).
+
+\bigskip
+\noindent
+\textbf{Proof of the ``$\Ra$'' direction:} We have to show that 
+\begin{align*}
+x\in Y \implies \FRm x \quad .
+\end{align*}
+We proceed by induction on the number of applications of the immediate consequence operator to show that 
+\begin{align*}
+\forall 0\leq i \leq m: x \in Y_i \implies \FRm x \quad .
+\end{align*}
+\emph{Base case:} $i=0$, $x\in Y_0$. Since $Y_0 = Var(\FF)$, $x \in Var(\FF)$ and thus $\FRm x$ (by Eq.~\ref{eqn:defFRm}).  
+
+\noindent
+\emph{Induction hypothesis:} Assume that, for any $n\geq 0$, $x\in Y_n \implies \FRm x$ holds.
+
+\noindent
+\emph{Induction step:} If $x \in Y_n$, by the hypothesis we immediately get that $x\in Y_{n+1} \implies \FRm x$. (We can construct $Y_n = Y_{n+1} \setminus \{p\}$, where $p \neq x$). Otherwise, $x \not \in Y_n$, i.e., $Y_{n+1} = Y_{n} \cup \{x\}$. We get (by the hypothesis) that 
+\begin{align*}
+\forall 0 \leq i \leq |Y_n|, q_i \in Y_n: \FRm q_i \quad ,
+\end{align*}
+and (by construction of $Y$) that 
+\begin{align*}
+x \in Y_{n+1} \implies \exists (c=\neg q_1 \lor \dots \lor \neg q_k \lor x)\in \RR: \forall q_i: q_i \in Y_n \quad ,
+\end{align*}
+which is the definition of $\FRm x$ as given in Eq.~\ref{eqn:defFRm} and thus $x\in Y_{n+1} \implies \FRm x$, which concludes the proof. \qed
+
+
+\bigskip
+\noindent
+\textbf{Proof of the ``$\La$'' direction:} We have to show that
+\begin{align*}
+\FRm x \implies x \in Y \quad .
+\end{align*}
+As above, we proceed by induction on the number of applications of the immediate consequence operator, to show that 
+\begin{align*}
+\FRm_i x \implies x \in Y_i \quad ,
+\end{align*}
+where $\FRm_i x$ means that the implaction of $x$ by $\FF \cup \RR$ can be computed in $i$ applications of the immediate consequence operator.
+
+\noindent
+\emph{Base case:} $\FRm_0 x \implies \FF \models x \implies x \in Var(\FF)$. By construction, $Y_0 = Var(\FF) \subseteq Y$ and thus $x \in Y$.
+
+\noindent
+\emph{Induction hypothesis:} Assume that, for any $n\geq 0$, $\FRm_n x \implies x\in Y_n$ holds.
+
+\noindent
+\emph{Induction step:} W.l.o.g., assume that $\FRm_{n+1} x$ but $\FRnm_n x$ (if $\FRm_n$, we immediately get $x\in Y_n$ by the induction hypothesis and since $Y_n \subseteq Y_{n+1}$ we get $x \in Y_{n+1}$). 
+By definition (Eq.~\ref{eqn:defFRm}) and since $x\not \in Var(\FF)$, we get
+\begin{align*}
+\FRm_{n+1} x \implies \exists (c=\neg q_1 \lor \dots \lor \neg q_k \lor x)\in \RR: \forall q_i: \FRm q_i \quad .
+\end{align*}
+In order for the rule $c$ to be useable for the ($n+1$)-st application of the immediate consequence operator, all the conjuncts in the antecedent have to be implied by the previous $n$ applications, i.e., $\forall q_i: \FRm_n q_i$, and thus (by the hypothesis) $\forall q_i: q_i \in Y_n$.
+The application of the operator then yields $Y_{n+1} = Y_n + \{x\}$ and thus $x \in Y_{n+1}$, concluding the proof. 
+\qed
+
+
+
+
+\end{document}
+
+

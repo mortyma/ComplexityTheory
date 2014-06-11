@@ -1,0 +1,428 @@
+   \documentclass [11pt]{article}
+   %\usepackage{ulem}
+   \usepackage{latexsym}
+   \usepackage{amssymb}
+   \usepackage{amsmath}
+   \usepackage{amsthm}
+   \usepackage{mathrsfs} %Support use of the Raph Smith’s Formal Script font in mathematics
+   \usepackage[sc]{mathpazo} %mathematical fonts
+   \usepackage{url}
+   \usepackage{ulem}
+   \usepackage{enumitem}
+
+   \textwidth      15cm
+   \textheight     23cm
+   \oddsidemargin 0.5cm
+   \topmargin    -0.5cm
+   \evensidemargin\oddsidemargin
+
+
+   \pagestyle{plain}
+
+
+\title{Complexity Theory}
+\author{VU 181.142, SS 2014}
+\date{Homework Assignment 1}
+ 
+  \newtheorem{theorem}{Theorem}
+  \newtheorem{lemma}[theorem]{Lemma}
+  \newtheorem{exercise}{Exercise}
+
+  \newcommand{\ra}{\rightarrow}
+  \newcommand{\Ra}{\Rightarrow}
+  \newcommand{\La}{\Leftarrow}
+  \newcommand{\la}{\leftarrow}
+  \newcommand{\LR}{\Leftrightarrow}
+
+
+\newcommand{\compl}[1]{\overline{#1}}
+
+\renewcommand{\phi}{\varphi}
+\renewcommand{\theta}{\vartheta}
+
+\def\II{{\cal I}} 
+\newcommand{\True}{\mathbf{true}}
+\newcommand{\False}{\mathbf{false}}
+\def\ox{\neg x} 
+\def\oy{\neg y} 
+\def\oz{\neg z} 
+\def\oa{\overline{\alpha}}
+\def\ob{\overline{\beta}}
+\def\og{\overline{\gamma}}
+\def\od{\overline{\delta}}
+\def\oe{\overline{\epsilon}}
+\def\oz{\overline{\zeta}}
+\def\a{\alpha}
+\def\b{\beta}
+\def\g{\gamma}
+\def\d{\delta}
+\def\e{\epsilon}
+\def\z{\zeta}
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+% within an align* environment, number and label the equation. #1 is the 
+%label text to be appended to eqn:
+\newcommand\neqn[1]{\numberthis\label{eqn:#1}}
+
+\renewcommand{\em}{\rm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\maketitle
+
+\begin{tabbing}
+Submission Deadline: \quad \= \kill
+Name: \> Martin Kalany \\
+Matr-Nr: \> 0825673 \\
+Begin: \> 18 March, 2014  \\
+Submission Deadline: \>1 April, 2014  \\
+send to: \> \url{complexity@dbai.tuwien.ac.at}\\
+Maximum credits: \> 10 
+\end{tabbing}
+
+
+\medskip
+
+
+\noindent
+In the lecture ``Formale Methoden der Informatik'', the following Cook reduction from {\bf co-2-SAT}
+to the {\bf REACHABILITY} problem was given:
+
+\begin{itemize}
+\item The variables of $\phi$ and their negations form the vertices of
+$G(\phi)$.
+\item
+There is an arc $(\alpha,\beta)$ iff there is a clause $\compl{\alpha}
+\lor \beta$ or $\beta \lor \compl{\alpha}$ in $\phi$, 
+where $\compl{\alpha}$ is the complement of $\alpha$, i.e.: If $\alpha$ is true
+in some satisfying assignment ${\cal I}$ of $\phi$, then $\beta$ must also be true in ${\cal I}$.
+\item It can be shown that $\phi$ is unsatisfiable iff there is a variable $x$ such that
+there are paths from $x$ to $\neg x$ and from $\neg x$ to $x$ in
+$G(\phi)$.
+\end{itemize}
+
+\noindent
+{\em Notation.}
+It is convenient to write $x \Ra y$ if $y$ is reachable from $x$ in 
+the graph $G(\phi)$.
+
+\bigskip
+
+\noindent
+{\em \bf{Remark.}}
+I find it a bit confusing that $x$ and $z$ are used both for literals and variables. Thus, let $x$, $y$, $z$ be variables and let $\a$, $\b$, $\g$, $\d$, $\e$, $\z$ be literals. I modified the given algorithm accordingly. 
+
+\smallskip
+\noindent
+{\em \bf{Remark.}}
+As usual, for any literals $\a$ and $\b$, we will assume that the commutative law holds, that is:
+\begin{align}
+(\a \lor \b) \iff (\b \lor \a) \quad .
+\end{align}
+
+\medskip
+
+\noindent
+\textbf{Definition.} Let $Path(\a,\b)$ denote a sequence of arcs of the form 
+\begin{align}
+Path(\a,\b) := (\a, \g_1),(\g_1,\g_2),\dots(\g_{i-i},\g_i),(\g_i,\b) \quad ,
+\end{align}
+where $(\a,\g_1) \in G(\phi)$, $(\g_i,\b) \in G(\phi)$ and $\forall\; 2 \leq j \leq i:\;(\g_{j-1}, \g_j) \in G(\phi)$. W.l.o.g., assume that this path is cycle free, i.e., that $\a\neq \g_1$, $\g_i \neq\b$ and $\g_j \neq \g_k\;\forall \leq j, k \leq i$, $j\neq k$.
+
+\medskip
+
+\begin{exercise}[4 credits]\label{ex1}
+{\em Give a rigorous proof of the 
+``if''-direction of the correctness of the above reduction, i.e.: \\
+%
+If there exists a variable~$x$, s.t.\
+$x \Ra  \neg x$ and $\neg x \Ra x$ in
+$G(\phi)$, then $\phi$ is unsatisfiable.
+}%em
+\end{exercise}
+
+
+\noindent
+{\bf Hint.} Carefully distinguish between what is assumed, what is defined and what has to be shown. The proof could thus start as follows: 
+
+\medskip
+\noindent
+{\bf Proof.} (indirect) 
+Suppose that there exists a variable~$x$, s.t.\
+$x \Ra  \neg x$ and $\neg x \Ra x$ in
+$G(\phi)$. Moreover, suppose that there exists a model ${\cal I}$ of $\phi$. We derive a contradiction by showing that 
+then both $x$ and $\neg x$ are true in ${\cal I}$.
+
+\bigskip
+\noindent
+Suppose 
+\begin{align}
+\exists x \in G(\phi):\;x \Ra  \ox \quad ,
+\end{align}
+i.e., $\exists\; Path(x, \ox) \in G(\phi)$.
+By construction of $G(\phi)$ (given by the reduction), an arc $(\alpha, \beta) \in G(\phi) \Leftrightarrow (\compl{\alpha} \lor \beta)$ in $\phi$; thus, $(\compl{x} \lor \g_1)$, $(\compl{\g_i} \lor \compl{x})$, $\forall 2 \leq j \leq i:\;(\compl{\g_{j-1}} \lor \g_j)$  in $\phi$. Since $\phi$ is a formula in 2-CNF, we can equally write 
+\begin{align}
+\phi' := (\compl{x} \lor \g_1) \land (\compl{\g_1} \lor \g_2) \land \dots \land (\compl{\g_{i-1}}, \g_i) \land (\compl{\g_i} \lor \compl{x}) \quad ,
+\end{align}
+with $\phi'$ in $\phi$. For a 2-CNF formula to be satisfied under assignment ${\cal I}$, each clause must evaluate to true (under assignment ${\cal I}$). We proceed by case distinction on the truth value assigned to $\g_1$ by ${\cal I}$:
+\begin{itemize}
+\item ${\cal I}(\g_1)$ = false: The clause $(\compl{x} \lor \g_1)$ in $\phi$ immediately implies that ${\cal I}(x)$ = false, otherwise ${\cal I}(\phi)$ cannot evaluate to true.
+\item ${\cal I}(\g_1)$ = true: We make the following observation:
+\begin{align}
+(\ox \lor \g_1) \land (\compl{\g_1} \lor \g_2) \land {\cal I}(\g_1) = true \implies {\cal I}(\g_2) = true \quad . \neqn{observation}
+\end{align}
+In general, 
+\begin{align}
+(\oa \lor \b) \land (\ob \lor \g)\;\;,\;\;{\cal I}(\b) = true \implies {\cal I}(\g) = true \quad . \neqn{observation} 
+\end{align}
+Applying this argument for all $i$, we get that ${\cal I}(\g_i)$ = true, which, in conjunction with the clause $(\compl{\g_i} \lor \ox)$, implies that ${\cal I}(x)$ = false.
+\end{itemize}
+Thus, 
+\begin{align}
+\exists x \in G(\phi):\;x \Ra  \ox \implies {\cal I}(x) = false \quad . \neqn{res1}
+\end{align}
+
+\bigskip
+\noindent
+Next, suppose 
+\begin{align}
+\exists x \in G(\phi):\;\ox \Ra  x \quad .
+\end{align}
+By the same argument as above, we get
+\begin{align}
+(x \lor \g_1) \land (\compl{\g_1} \lor \g_2) \land \dots \land (\compl{\g_{i-1}}, \g_i) \land (\compl{\g_i} \lor x) = \phi''
+\end{align}
+with $\phi''$ in $\phi$. By case distinction on $\II(\g_1)$:
+\begin{itemize}
+\item ${\cal I}(\g_1)$ = false: The clause $(x \lor \g_1)$ in $\phi$ immediately implies that ${\cal I}(x)$ = true, otherwise ${\cal I}(\phi)$ cannot evaluate to true.
+\item ${\cal I}(\g_1)$ = true: Using Eq. \ref{eqn:observation}, we get that ${\cal I}(\g_i)$ = true, which, in conjunction with the clause $(\compl{\g_i} \lor x)$, implies that ${\cal I}(x)$ = true.
+\end{itemize}
+Thus, 
+\begin{align}
+\exists x \in G(\phi):\;\ox \Ra  x \implies {\cal I}(x) = true\quad . \neqn{res2}
+\end{align}
+
+Eq. \ref{eqn:res1} and Eq. \ref{eqn:res2} form a contradiction, since $x$ cannot be both true and false under assignment  ${\cal I}$. The claim from Exercise \ref{ex1} follows directly.
+\qed
+
+\bigskip
+
+
+\noindent
+For the ``only if''-direction of the correctness proof of the 
+problem reduction from {\bf co-2-SAT}
+to {\bf REACHABILITY}, we have to show the following implication: If there exists no 
+variable~$x$, s.t.\
+$x \Ra  \ox$ and $\ox \Ra x$ in
+$G(\phi)$, then there 
+exists a model $\II$ of $\phi$.
+To this end, consider the truth assignment $\II$ constructed by the following algorithm: 
+%
+%
+\begin{tabbing}
+123\=123\=123\=123\=123\=123\=\kill
+/* Step 1 */  \\
+{\bf for each} literal $\alpha$ \sout{$x$}, s.t.\ $\overline{\alpha} \Ra \alpha$ \sout{$\overline{x} \Ra x$} 
+{\bf do} \\
+\> $\II(\alpha) := \True$; \sout{$\II(x) := \True$;}
+ /* hence, implicitly, $\II(\oa) := \False$; \sout{$\II(\ox) := \False$;} */ \\
+\> {\bf for each} literal $\beta$ \sout{$z$} with $\alpha \Ra \beta$ \sout{$x \Ra z$} 
+{\bf do}  $\II(\beta) := \True$ \sout{$\II(z) := \True$} {\bf od};
+\\
+{\bf od}; 
+\\[1.1ex]
+/* Step 2 */  \\
+{\bf while} there exists $x \in Var(\phi)$, s.t.\ $\II(x)$ is undefined
+{\bf do} \\
+\> choose an arbitrary variable $x$, s.t.\ $\II(x)$ is undefined; \\
+\> $\II(x) := \True$;  \\
+\> {\bf for each} literal $\beta$ \sout{$z$} with $x \Ra \beta$ \sout{$x \Ra z$}
+{\bf do}  $\II(\beta) := \True$ \sout{$\II(z) := \True$} {\bf od};\\
+{\bf od};
+\end{tabbing}
+%
+%
+To show that an assignment $\II$ thus constructed is indeed a 
+model of $\phi$, it is convenient to proof the following lemmas.
+
+\begin{lemma}
+\label{lem:1}
+Suppose that there exists no
+variable $x$, s.t.\ both $x \Ra \ox$ and $\ox \Ra x$ hold.
+Then a truth assignment made by the above algorithm is never changed later, i.e.: it cannot happen, that at some stage, 
+$\II (z) =\True$ for some variable $z$ and later this value is changed to 
+$\II (z) =\False$ or vice versa.
+\end{lemma}
+
+\begin{lemma}
+\label{lem:2}
+Suppose that there exists no
+variable $x$, s.t.\ both $x \Ra \ox$ and $\ox \Ra x$ hold.
+Then the truth assignment $\II$ constructed by the above algorithm
+is a model of $\phi$.
+\end{lemma}
+
+\noindent
+We first state and prove Lemma~\ref{lem:handy}, which will come in handy for the proofs of Lemma~\ref{lem:1} and Lemma~\ref{lem:2}:
+\begin{lemma}
+\label{lem:handy}
+Let $\a$, $\b$ be arbitrary literals. Then, 
+\begin{align}
+\a \Ra \b \implies \ob \Ra \oa
+\end{align}
+\end{lemma}
+
+\noindent
+{\bf Proof.}
+\begin{align}
+\a \Ra \b \implies \exists\; Path(\a, \b) =(\a, \g_1),(\g_1,\g_2),\dots,(\g_{i-1},\g_i),(\g_i,\b)
+\end{align}
+By the reduction
+\begin{align}
+(\oa \lor \g_1)\land (\compl{\g_1} \lor \g_2) \land \dots \land (\compl{\g_{i-1}} \lor \g_i) \land (\compl{\g_i} \lor \b)\; \mathrm{in}\; \phi \quad ,
+\end{align}
+and thus (by the reduction) arcs $(\ob, \compl{\g_{i}})$, $\forall 1 \leq j \leq i\; (\compl{\g_j}, \compl{\g_{j-1}})$ and $(\compl{\g_1}, \oa) \in G(\phi)$, i.e., $\ob \Ra \oa$. 
+\qed
+
+\smallskip
+
+\noindent
+\begin{exercise}[4 credits]
+{\em Give a rigorous proof of Lemma \ref{lem:1}.
+}%em
+\end{exercise}
+\noindent
+{\bf Proof.} For any variable $x \in Var(\phi)$, one of the following three cases holds (by the assumption in Lemma 1):
+\begin{enumerate}
+\item $\ox \Ra x \in G(\phi)\;\;\land\;\; x \Ra \ox \not \in G(\phi)$.
+\item $x \Ra \ox \in G(\phi) \;\;\land\;\;  \ox \Ra x \not \in G(\phi)$.
+\item $\ox \Ra x \not \in G(\phi)\;\;\land\;\; x \Ra \ox \not \in G(\phi)$.
+\end{enumerate}
+For each case we will show by contradiction that for any $x \in Var(\phi)$, the algorithm never sets $\II(x) = \True\;(\False)$ after setting $\II(x) = \False\;(\True)$.
+\begin{enumerate}[label=(\roman*)]
+\item Case 1: Let $\a = x$. Then, in step 1.1, $\II(x) = \True$ and 
+\begin{enumerate}[label=\alph*)]
+\item step 1.1 will never assign a value to $x$ again (since we just took care of $\ox \Ra x$ and  $x \Ra \ox \not \in G(\phi)$);
+\item in step 1.2, 
+\begin{align}
+\II(x) = \False \iff \b = \ox \land \II(\b) = \True \land (\a \Ra \b)
+\end{align}
+which implies that $x \Ra \ox$ holds. This contradicts the assumption.
+\end{enumerate}
+\item Case 2:  Let $\oa = x$. Then, in step 1.1, $\II(x) = \False$ and 
+\begin{enumerate}[label=\alph*)]
+\item step 1.1 will never assign a value to $x$ again;
+\item in step 1.2, 
+\begin{align}
+\II(x) = \True \iff \b = x \land \II(\b) = \True \land (\a \Ra \b)
+\end{align}
+which implies that $\ox \Ra x$ holds and thus contradicts the assumption.
+\end{enumerate}
+\end{enumerate}
+From (i) and (ii) we conclude that for cases 1 and 2, Lemma 1 holds for step 1 of the algorithm. For cases 1 and 2:
+\begin{enumerate}[label=(\roman*),resume]
+\item $x \in Var(\phi)$ and $\II(x)$ undefined is not possible (because $\II(x)$ was set in step 1 of the algorithm). Thus, step 2 will be skipped for $x$ and cannot change the assignment.
+\item For $\II(x)$ to change in 
+\begin{itemize}
+\item Case 1 (note that (i) set $\II(x) = \True$): 
+\begin{align}
+\II(x) = \False \iff &\b = \ox \land \II(\b) = \True \land \exists y\neq x\; \\
+& \mathrm{s.t.}\; \II(y)\; \mathrm{undefined} \land (y \Ra \b)\quad . \neqn{reqCase1}
+\end{align}
+However, $y \Ra \ox$ implies $x \Ra \oy$ (Lemma~\ref{lem:handy}), which in turn implies that $\II(y)$ was set in step 1.2, which was assumed undefined in Eq.~\ref{eqn:reqCase1}.
+\item Case 2 (note that (ii) set $\II(x) = \False$): 
+\begin{align}
+\II(x) = \True \iff &\b = x \land \II(\b) = \True \land \exists y\neq x\; \\
+& \mathrm{s.t.}\; \II(y)\; \mathrm{undefined} \land (y \Ra \b)\quad . \neqn{reqCase2}
+\end{align}
+Again, $y \Ra x$ implies $\ox \Ra \oy$ (Lemma~\ref{lem:handy}), which in turn implies that $\II(y)$ was set in step 1, which was assumed undefined in Eq.~\ref{eqn:reqCase2}.
+\end{itemize}
+\end{enumerate}
+From (iii) and (iv) we conclude that for cases 1 and 2, Lemma 1 holds for step 2 of the algorithm as well (and thus Lemma 1 holds for cases 1 and 2).
+\begin{enumerate}[label=(\roman*), resume]
+\item Case 3: In step 2 of the algorithm, for any $x \in Var(\phi)$ s.t. $\II(x)$ is undefined, either:
+\begin{itemize}
+\item step 2.1 sets $\II(x) = \True$ at some point. To change the assignment,
+\begin{align}
+\II(x) = \False \iff &\b = \ox \land \II(\b) = \True \land \exists y\neq x\; \\
+& \mathrm{s.t.}\; \II(y)\; \mathrm{undefined} \land (y \Ra \b)\quad . \neqn{reqCase31}
+\end{align}
+which, by Lemma~\ref{lem:handy}, implies that $x \Ra \oy$, and thus $\II(y)$ was already set in step 2.2 right after  $\II(x) = \True$ was set, violating Eq.~\ref{eqn:reqCase31}. 
+\item $\II(x) = \True$ set by step 2.2 at some point requires 
+\begin{align}
+\II(x) = \True \iff &\b = x \land \II(\b) = \True \land \exists y\neq x\; \\
+& \mathrm{s.t.}\; \II(y)\; \mathrm{undefined} \land (y \Ra \b)\quad . \neqn{reqCase32}
+\end{align}
+which, by Lemma~\ref{lem:handy}, implies that $x \Ra y$. To change the assignment,
+\begin{align}
+\II(x) = \False \iff &\b = \ox \land \II(\b) = \True \land \exists y\neq x\; \\
+& \mathrm{s.t.}\; \II(y)\; \mathrm{undefined} \land (y \Ra \b)\quad . \neqn{reqCase33}
+\end{align}
+implying $x \Ra \oy$, which contradicts Eq.~\ref{eqn:reqCase 33} (by the same argument used in the above item).
+\item $\II(x) = \False$ set by step 2.2 at some point requires 
+\begin{align}
+\II(x) = \False \iff &\b = \ox \land \II(\b) = \True \land \exists y\neq x\; \\
+& \mathrm{s.t.}\; \II(y)\; \mathrm{undefined} \land (y \Ra \b)\quad . \neqn{reqCase34}
+\end{align}
+implies that $\ox \Ra y$. To change the assignment,
+\begin{align}
+\II(x) = \True \iff &\b = x \land \II(\b) = \True \land \exists z\neq x,y\; \\
+& \mathrm{s.t.}\; \II(z)\; \mathrm{undefined} \land (z \Ra \b)\quad . \neqn{reqCase35}
+\end{align}
+implying $\ox \Ra \oz$ (Lemma~\ref{lem:handy}), which contradicts Eq.~\ref{eqn:reqCase35} (by the same argument used in the above item).
+\end{itemize}
+\end{enumerate}
+From (v) we conclude that Lemma 1 holds for case 3 as well and thus for all cases.
+\qed
+
+
+\noindent
+\begin{exercise}[2 credits]
+{\em Give a rigorous proof of Lemma \ref{lem:2}.
+}%em
+\end{exercise}
+\noindent
+{\bf Proof.} Due to Lemma~\ref{lem:2}, it suffices to show that:
+\begin{enumerate}
+\item All $x \in Var(\phi)$ are assigned either $\II(x) = \True$ or $\II(x) = \False$. \\
+This is trivially true since, in step 2
+\begin{align}
+\exists x \in Var(\phi)\; \mathrm{s.t.}\; \II(x)\; \mathrm{undefined} \implies \II(x) = \True
+\end{align}
+\item No assignment made by the algorithm causes a clause to evaluate to false.
+\begin{enumerate}[label=(\roman*)]
+\item Let $X_1 := \{x\in Var(\phi)\; |\; \ox \Ra x \}$. The assignment in step 1.1 ($\a = x$, $\II(\a) = \True$) causes clauses $\forall\; x \in X_1\;(x \lor \gamma)$ to evaluate to true. 
+\item Let $B_1 := \{\b\; |\; x \Ra \b \}$. The assignment in step 1.2 ($\forall\; \b \in B_1: \;\II(\b) = \True$) causes all clauses $\forall\; \b \in B_1\;(\b \lor \gamma)$ to evaluate to true. Note that this includes all clauses $(\d \lor \ox)$ for any $\d$ (we can set $\g = \ox$ and $\forall\;\d: \d \in B_1$ since $(\d \lor \ox)$ in $\phi$ implies $(x\Ra \d) \in G(\phi)$).
+\item Let $X_2 := \{x\in Var(\phi)\; |\; x \Ra \ox \}$. The assignment in step 1.1 ($\a = \ox$, $\II(\a) = \True$ and thus $\II(x) = false$) causes clauses $\forall\; x \in X_2\;(\ox, \gamma)$ to evaluate to true.
+\item Let $B_2 := \{\b\; |\; \ox \Ra \b \}$. The assignment in step 1.2 ($\forall\; \b \in B_1: \;\II(\b) = \True$) causes clauses $\forall\; \b \in B_1\;(\b \lor \gamma)$ to evaluate to true. Note that this includes all clauses $(\d \lor x)$ for any $\d$.
+\end{enumerate}
+Let $X := X_1 \cup X_2$ and $B := B_1 \cup B_2$.
+\begin{enumerate}[label=(\roman*), resume]
+\item From (i) to (iv) we can conclude that, after step 1, only clauses of the form $(\g \lor \d)$, where 
+\begin{itemize}
+\item $Var(\g) \not \in X$
+\item $Var(\d) \not \in X$
+\item $\g \not \in B$
+\item $\d \not \in B$,
+\end{itemize}
+do not yet evaluate to true. Equivalently, $\II(\d)$ undefined and $\II(g)$ undefined (otherwise, one of the above properties would be violated). 
+\begin{itemize}
+\item W.l.o.g., let $d=Var(\d)$ be the variable chosen in Step 2. The assignment in step 2.1 causes clauses of the form $(d \lor \e)$ to evaluate to true. 
+\item Let $B_3 := \{\b\; |\; d \Ra \b \}$. The assignment in step 2.2 ($\forall\; \b \in B_3:\;\II(\b) = \True$) causes all clauses $\forall\; \b \in B_1\;(\b \lor \e)$ to evaluate to true. Note that this includes the clauses $(\z \lor \neg d)$ for any literal $\z$ (we can set $\e = \neg d$ and $\forall\;\z: \z \in B_3$ since $(\z \lor \neg d)$ implies $(d \Ra \z)$).
+\item The two items above imply that for any variable $d \in Var(\phi$) with $\II(d)$ undefined before step 2 of the algorithm, all clauses of the form $(d,\e)$ or $(\neg d, \e)$ evaluate to true after step 2. 
+\end{itemize}
+\end{enumerate}
+\end{enumerate}
+
+\noindent
+This concludes the proof of Lemma~\ref{lem:2}. since we showed that 1.~all variables in $\phi$ are assigned a truth value and 2.~no assignment causes a clause to evaluate to false.
+
+\qed
+
+
+\end{document}
+
+

@@ -1,0 +1,334 @@
+   \documentclass [11pt]{article}
+   \usepackage{latexsym}
+   \usepackage{amssymb}
+   \usepackage{amsmath}
+   \usepackage{amsthm}
+   \usepackage{mathtools}
+   \usepackage{url}
+   \usepackage{paralist}
+  \usepackage{algorithm}
+  \usepackage{algpseudocode}
+
+   \textwidth      15cm
+   \textheight     21cm
+   \oddsidemargin 0.5cm
+   \topmargin    -0.5cm
+    
+   \evensidemargin\oddsidemargin
+
+ \newcommand{\nop}[1]{}
+
+
+   \pagestyle{plain}
+   \bibliographystyle{plain}
+
+
+\title{Complexity Theory}
+\author{VU 181.142, SS 2014}
+\date{Homework Assignment 4}
+
+
+  \newtheorem{theorem}{Theorem}
+  \newtheorem{lemma}[theorem]{Lemma}
+  \newtheorem{exercise}{Exercise}
+
+  \newcommand{\ra}{\rightarrow}
+  \newcommand{\Ra}{\Rightarrow}
+  \newcommand{\La}{\Leftarrow}
+  \newcommand{\la}{\leftarrow}
+  \newcommand{\LR}{\Leftrightarrow}
+
+  \renewcommand{\phi}{\varphi}
+  \renewcommand{\theta}{\vartheta}
+
+  \newcommand{\blank}{\sqcup}
+\newcommand{\ssym}{\triangleright}
+
+
+\newcommand{\ccfont}[1]{\protect\mathsf{#1}}
+\newcommand{\NP}{\ccfont{NP}}
+\newcommand{\SAT}{\mbox{\bf SAT}}
+\newcommand{\Ptime}{\ccfont{P}}
+\newcommand{\phs}[1]{\Sigma_{#1}\Ptime}
+\newcommand{\php}[1]{\Pi_{#1}\Ptime}
+\newcommand{\QSAT}[1]{\ccfont{QSAT}_{#1}}
+\newcommand{\MINSAT}{\mbox{\bf MINIMAL MODEL SAT}}
+\newcommand{\True}{\mathbf{true}}
+\newcommand{\False}{\mathbf{false}}
+
+\newcommand{\MINCARDSAT}{\textbf{CARD-MINIMAL MODEL SAT}}
+\newcommand{\MAXCARDSAT}{\textbf{CARD-MAXIMAL MODEL SAT}}
+\newcommand{\MINWEIGHTSAT}{\textbf{WEIGHT-MINIMAL MODEL SAT}}
+\newcommand{\MINLEXSAT}{\textbf{LEX-MINIMAL MODEL SAT}}
+
+\newcommand{\mI}{\ensuremath{\mathcal{I}}}
+\newcommand{\mJ}{\ensuremath{\mathcal{J}}}
+\newcommand{\mIp}{\ensuremath{\mathcal{I}'}}
+\newcommand{\mJp}{\ensuremath{\mathcal{J}'}}
+\newcommand{\fai}{\ensuremath{\forall i, 1 \leq i \leq n}}
+
+\newcommand{\Cmin}{\ensuremath{C_\text{min}}}
+\newcommand{\Cmax}{\ensuremath{C_\text{max}}}
+
+\renewcommand{\labelenumi}{(\alph{enumi})}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\maketitle
+
+\begin{tabbing}
+Submission Deadline: \quad \= \kill
+Name: \> Martin Kalany \\
+Matr-Nr: \> 0825673 \\
+Begin: \> 13 May, 2014 \\
+Submission Deadline: \>27 May, 2014  \\
+send to: \> \url{complexity@dbai.tuwien.ac.at}\\
+Maximum credits: \> 10 
+\end{tabbing}
+
+\medskip
+\noindent
+\begin{exercise}[5 credits]
+{\em 
+Recall the definition of the following variants of the \SAT -problem:
+\MINLEXSAT\
+and \MINWEIGHTSAT.
+\smallskip
+
+\noindent
+Give a log-space problem reduction 
+from the \MINLEXSAT\ problem to 
+\MINWEIGHTSAT\ and prove the correctness of your reduction.
+}%em
+
+\bigskip
+\noindent
+{\bf Hint.} Choose the weights in such a way that, for
+every $i$, the weight of the variable $x_i$ exceeds the total weight
+of $\{x_{i+1}, \ldots, x_n\}$.
+\end{exercise}
+
+\noindent
+\textbf{Solution:}
+
+Let \mI\ and \mJ\ be interpretations. Positive instances for \MINLEXSAT\ (\MINWEIGHTSAT) are represented by certificates $C_L$ ($C_W$), where
+\begin{align*}
+C_L &= (\phi, \mI(x_1),\dots,\mI(x_n)) \\
+&\text{where } \mI(x_n) = \True \text { and } \mI \text{ is a LEX-MINIMAL MODEL of } \phi \\
+C_W &= (\phi, w_1,\dots,w_n, \mJ(x_1)\dots,\mJ(x_n), y) \\
+&\text{where } \mJ(y) = \True \text { and } \mJ \text{ is a WEIGHT-MINIMAL MODEL of } \phi \quad .
+\end{align*}
+
+\noindent
+\textbf{Reduction:}
+We construct a positive instance $C_W$ of \MINWEIGHTSAT\ from a positive instance $C_L$ of \MINLEXSAT\ by 
+\begin{align*}
+\mJ(x_i) &= \mI(x_i) \;\;\fai \\
+y &= x_n \\
+w_i &= 2^{n-i}\;\; \fai \quad .
+\end{align*}
+
+\noindent
+\textbf{Definition:} We define 
+\begin{align*}
+sum(C_W) &: = \smashoperator[r]{ \sum_{i\in \{i \mid \mI(x_i) = \True\}} } w_i
+\end{align*}
+
+\noindent
+\textbf{Correctness:}
+We have to show
+\begin{align*}
+& C_L \text{ is a positive instance of \MINLEXSAT\ } \iff \\
+& C_W \text{ is a positive instance of \MINWEIGHTSAT\ } \quad .
+\end{align*}
+
+``$\Rightarrow$'': By contradiction. Let $C_L$ be a positive instance of \MINLEXSAT.
+We know that $\mI(\phi) = \True$ and $\mI(x_n) = \True$.
+Assume that $C_W$ (constructed by the reduction) is not a positive instance of \MINWEIGHTSAT.
+Then, either 
+\begin{inparaenum}
+\item $\mJ(\phi) = \False $,
+\item $\mJ(y) = \False$ or
+\item $\mJ$ is not minimal.
+\end{inparaenum}
+We now show that either of the above leads to a contradiction:
+\begin{enumerate}
+\item $\mJ(\phi) = \False \implies \mI(\phi) = \False$ (immediate by the reduction: $\mJ(x_i) = \mI(x_i) \fai$), which contradicts the assumption that $C_L$ is a positive instance of \MINLEXSAT.
+\item $\mJ(y) = \False \implies \mI(x_n) = \False$, again contradicting the assumption.
+\item Since (by (a) and (b)) a model $\mJ$ for $\phi$ s.t.\ 
+$\mJ(\phi) = \True \land \mJ(y) = \True$ has to exist, there has to exist a weight-minimal model $\mJp$ for $\phi$, i.e., a positive instance  
+\begin{align*}
+C'_W = (\phi, w_1,\dots,w_n, \mJp(x_1)\dots,\mJp(x_n), y)
+\end{align*}
+for which 
+\begin{align*}
+\mJp(\phi) = \True \land \mJp(y) = \True \land sum(C'_W) < sum(C_W)
+\end{align*}
+holds. Thus,
+\begin{align*}
+\exists i: \mJp(x_i) \neq \mJ(x_i) \land \forall 1 \leq j < i: \mJp(x_i) = \mJ(x_i) \quad .
+\end{align*}
+We distinguish by cases:
+\begin{compactitem}
+ \item $\mJp(x_i) = \True \land \mJ(x_i) = \False$: Since $\fai: w_i > \sum_{j=i+1}^{n} w_j $ we get $sum(C'_W) > sum(C_W)$, contradicting the assumption that $\mJ$ is not weight-minimal.
+ \item $\mJp(x_i) = \False \land \mJ(x_i) = \True$. Since $\mJp$ is a model of $\phi$, we can construct a certificate $C'_L$ as 
+ \begin{align*}
+  C'_L &= (\phi, \mIp(x_1),\dots, \mIp(x_n))\\
+  &\text{where } \mIp(x_i) = \mJp(x_i) \;\;\fai
+ \end{align*}
+where the model $\mIp$ is lexicographically smaller than $\mI$, since $\exists i: \mIp(x_i) = \False \land \mI(x_i) = \True \land \forall 1 \leq j < i: \mIp(x_i) = \mI(x_i)$, contradicting the assumption that $\mI$ is a minimal model.
+\end{compactitem}
+\end{enumerate}
+
+``$\Leftarrow$'': 
+By contradiction.
+Let $C_W$ be a positive instance of \MINWEIGHTSAT. We know that $\mJ(y) = \True$, $\mJ(\phi) = \True$ and that $\mJ$ is a weight-minimal model.
+(In case $y \neq x_n$, we can rename the variables $x_i$ s.t.\ $y=x_n$ w.l.o.g.)
+Assume that $C_L$ as constructed by the reduction is not a positive instance of \MINLEXSAT.
+Then, either 
+\begin{inparaenum}
+\item $\mI(\phi) = \False $,
+\item $\mI(x_n) = \False$ or
+\item $\mI$ is not minimal.
+\end{inparaenum}
+Items (a) and (b) immediately contradict the assumption that $C_W$ is a positive instance.
+For (c), we know that a lexicographically minimal model $\mIp$ (s.t.\ $\mIp(x_n) = \True$) for $\phi$ has to exists, which implies
+\begin{align*}
+ \exists i: \mIp(x_i) = \False \land  \mI(x_i) = \True \land \forall 1 \leq j < i: \mIp(x_i) = \mI(x_i) \quad .
+\end{align*}
+Then, we can construct a positive instance $C'_W$ of \MINWEIGHTSAT.
+Since $\fai: w_i > \sum_{j=i+1}^{n} w_j $, we have $sum(C'_W) < sum(C_W)$, contradicting the assumption that $C_W$ is a positive instance of \MINWEIGHTSAT.
+
+\medskip
+\noindent
+\textbf{Log-space:} To construct a positive instance $C_W$ of \MINWEIGHTSAT\ out of a positive instance $C_L$ of \MINLEXSAT, the components $\phi$, $\mI(x_i) \;\forall 1 \leq i \leq n$ and (again) $\mI(x_n)$  need simply be copied to the tape, which trivially is feasible in log-space\footnote{We assume a 3-string Turing machine with input alphabet $\Sigma = \{0,1\}$ and tape alphabet $\Gamma = \Sigma \cup\{\blank, \ssym\}$.} (We can find $n$ by counting the number of variables that follow the formula $\phi$ in $C_L$ in one scan over the input. The counter requires $\log n$ bits).
+Note that the weights $w_i$ are all powers of two which we can print by the following algorithm:
+\begin{algorithmic}
+\For{\texttt{$i \gets n$; $i > 0$; $i \gets i -1$}}
+      \State \texttt{print $\blank$;}
+      \State \texttt{print $1$;}
+      \For{\texttt{$j \gets 1$; $j < i$; $j \gets j +1$}}
+	\State \texttt{print $0$;}
+      \EndFor
+\EndFor
+\end{algorithmic}
+Note that the algorithm requires only two counters with a maximum value of $n$ which may be represented in binary with $log_2(n)$ bits. 
+Thus, the reduction is feasible in log-space.
+\qed
+
+\medskip
+\noindent
+\begin{exercise}[5 credits]
+{\em 
+Recall the definition of the following variants of the \SAT -problem:
+\MINCARDSAT\
+and \MAXCARDSAT.
+\smallskip
+
+\noindent
+Give a log-space problem reduction 
+from the \MINCARDSAT\ problem to 
+\MAXCARDSAT\ and prove the correctness of your reduction.
+}%em
+
+\noindent
+{\bf Hint.} Let $(\phi,z)$ denote an instance of the 
+\MINCARDSAT\ problem and let $X = \{x_1, \dots, x_n\}$ denote the 
+variables occurring in $\phi$. Add additional variables 
+$X' = \{x'_1, \dots, x'_n\}$ and
+$X'' = \{x''_1, \dots, x''_n\}$ and transform $\phi$ into $\psi$,
+s.t.\  the models of $\psi$ are obtained from the models of $\phi$
+by leaving the truth value of the variables $x_i$ unchanged and by
+enforcing that the truth value of $x'_i$ and $x''_i$ coincides with 
+the truth value of $\neg x_i$.
+\end{exercise}
+
+\noindent
+\textbf{Solution:}
+
+\noindent
+\textbf{Reduction:}
+Let $X = \{x_1,\dots, x_n\}$ be the variables that occur in $\phi$, $\Cmin = (\phi, z)$ be a positive instance of \MINCARDSAT\ where $z=x_i$ for some $i,\;1\leq i\leq n$ and let  $X' = \{x'_1,\dots, x'_n\}$ and $X'' = \{x''_1,\dots, x''_n\}$ be fresh propositional variables.
+We construct a positive instance $\Cmax = (\psi, z)$ of \MAXCARDSAT\ by extending $\phi$ s.t.
+\begin{align*}
+\psi = \phi \land \bigwedge_{i=1}^{n} \left( (x_i \lor x'_i)  \land (x'_i \leftrightarrow x''_i) \right)
+\end{align*}
+In the following, we will refer to specific conjuncts of $\psi$ via  $\psi_0$ and $\psi_i$ (for $1 \leq i \leq n$):
+\begin{align*}
+\psi_0 &= \phi\\
+\psi_i &= (x_i \lor x'_i)  \land (x'_i \leftrightarrow x''_i) \\
+\psi &= \psi_0 \land \bigwedge_{i=1}^{n} \psi_i 
+\end{align*}
+
+\noindent
+\textbf{Correctness:}
+We have to show that 
+\begin{align*}
+&\Cmin \text{ is a positive instance of \MINCARDSAT} \iff \\
+&\Cmax \text{ is a positive instance of \MAXCARDSAT} \quad .
+\end{align*}
+
+``$\Rightarrow$'': By contradiction. 
+Assume \Cmin\ is a positive instance of \MINCARDSAT. 
+Then, there exists a model \mI\ s.t.\ $\mI(\phi) = \True \land \mI(z) = \True$ and $\mI$ is cardinality-minimal.
+Let \mJ\ be an extension of \mI\, where 
+\begin{align*}
+\mJ(x_i) = \mI(x_i) \quad , \quad \mJ(x'_i) = \neg \mI(x_i) \quad , \quad \mJ(x''_i) = \mJ(x'_i) \quad \fai \quad .
+\end{align*}
+Clearly, $\mJ(\psi_0) = \True$, since $\mJ(\psi_0) = \mI(\phi)$ by construction and \mI\ is a model of $\phi$. 
+For each conjunct $\psi_i$ in $\psi$, we know that $\mJ(\psi_i) = \True$, since  
+\begin{compactitem}
+\item in the first conjunct ($x_i \lor x'_i$), by construction of \mJ\, either $\mJ(x_i) = \True$ or $\mJ(x'_i) = \True$;
+\item in the second conjunct ($x'_i \land x''_i$), $\mJ(x'_i) = \mJ(x''_i)$ (immediate by the construction of \mJ),
+\end{compactitem}
+and thus $\mJ(\psi) = \True$.
+Furthermore (by construction of $\mJ$ and \mI\ being a cardinality-minimal model of $\phi$ s.t.\ $\mI(z) = \True)$, we know that $\mJ(z) = \True$.
+Assume that \mJ\ is not a cardinality-maximal model of $\psi$, s.t.\ $\mJ(z) = \True$.
+Then, $\exists v\neq z \in Var(\psi)$ s.t.\ $\mJ(v) = \False \land \mJp(v) = \True \land \mJp(\psi) =\True$, where $\mJp(x_i) = \mJ(x_i) (\fai$, $x_i\neq v$) and $\mJp(v) = \True$.
+We distinguish by the following cases:
+\begin{compactitem}
+\item $v\in X$, i.e., $v = x_i$ for some $i$: Setting $\mJp(x_i) = \True$ will force $\mJp(x'_i) = \mJp(x''_i) = \False$ (otherwise, $\mJp$ cannot be a model of $\psi$, in particular of $\psi_i$).
+Note that changing the interpretation of any $x_i \in X$ from $\False$ to $\True$ will result in a model $\mJp$ that is smaller than $\mJ$, since doing so for one variable enforces the interpretation for two corresponding variables to be changed from $\True$ to $\False$.
+\item $v \in X'$, i.e., $v = x'_i$ for some $i$: Setting $\mJp(x'_i) = \True$ will force $\mJp(x_i) = \False$ and $\mJp(x''_i) = \True$, i.e., $\mJp$ is indeed larger than $\mJ$. 
+However, $\mI$ is assumed to be a minimal model of $\phi$ and thus we necessarily have $\mJp(\phi) = \False$ (Otherwise, $\mIp(x_j) = \mI(x_j) \;\; \forall 1 \leq j\neq i\leq n$, $\mIp(x_i) = \False$ would be a model of $\phi$ with smaller cardinality than $\mI$).
+\item $v \in X''$, i.e., $v = x''_i$ for some $i$: Analogous to the case above.
+\end{compactitem}
+Since each case leads to a contradiction to the assumption that \mJ\ is not maximal, we can conclude that \mJ\ is indeed a cardinality-maximal model of $\psi$ s.t.\ $\mJ(z) = \True$.
+ 
+\medskip
+``$\Leftarrow$'': By contradiction.
+Let \Cmax\ be a positive instance of \MAXCARDSAT, i.e., there is a model \mJ\ s.t.\ $\mJ(\psi) = \True \land \mJ(z) = \True$ and \mJ\ is maximal.
+
+Let \mI\ be the same model restricted to variables in $X$, i.e., 
+\begin{align*}
+ \fai: \mI(x_i) = \mJ(x_i)
+\end{align*}
+Since $\mJ(\psi) = \True$ and in particular $\mJ(\psi_0) = \True$, we conclude that $\mI(\phi) = \True$. 
+Furthermore, $\mI(z) = \True$ since $\mJ(z) =\True$ and $z=x_i$ for some $i,\;1\leq i\leq  n$.
+Now assume that $\mI$ is not a minimal model s.t.\ $\mI(z) = \True$ and let $\mIp$ be such a minimal model, i.e., $\exists x_i\neq z \in Var(\phi)$ s.t.\ $\mI(x_i) = \True \land \mIp(x_i) = \False$.
+However, since changing the interpretation of any $x_i$ from $\True$ to $\False$ results in the interpretations of the corresponding variables $x'_i$ and $x''_i$ to change from $\False$ to $\True$,
+the model $\mJp$ obtained from \mIp\ via the reduction is a larger model (compared to \mJ) of $\psi$, implying that $\mJ$ was not a maximal model.
+
+\medskip
+\noindent
+\textbf{Log-space:} Assume that the variables in $\phi$ are represented as binary strings (The variables are necessarily $n$ distinct elements from some finite domain $D$. Thus, we can enumerate the $n$ elements from $D$ by the numbers $1,...,n$, which we represent by binary strings).
+We find $n$ by storing the maximum encountered number (representing a variable; boolean operators obviously need to have a representation that makes them distinguishable from variables) while scanning the input. 
+Again, this requires $\log n$ space. 
+The output is generated by the following algorithm
+\begin{algorithmic}
+\State \texttt{copy input to output tape, except for last variable ($z$);}
+\For{\texttt{$i \gets 1$; $i \leq n$; $i \gets i +1$}}
+      \State \texttt{print $\land (x_i \lor x'_i) \land (x'_i \land x''_i)$;}
+\EndFor
+\State \texttt{copy $z$ to output tape;}
+\end{algorithmic}
+which is clearly computable in log-space.
+\qed
+
+\end{document}
+
+

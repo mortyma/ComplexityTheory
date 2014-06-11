@@ -1,0 +1,321 @@
+   \documentclass [11pt]{article}
+   \usepackage{latexsym}
+   \usepackage{amssymb}
+   \usepackage{url}
+   \usepackage{amsmath}
+   \usepackage{amsthm}
+   \usepackage{mathtools}
+   \usepackage{paralist}
+
+   \textwidth      15cm
+   \textheight     21cm
+   \oddsidemargin 0.5cm
+   \topmargin    -0.5cm
+   \evensidemargin\oddsidemargin
+
+ \newcommand{\nop}[1]{}
+
+
+   \pagestyle{plain}
+   \bibliographystyle{plain}
+
+
+\title{Complexity Theory}
+\author{VU 181.142, SS 2014}
+\date{Homework Assignment 5}
+
+
+  \newtheorem{theorem}{Theorem}
+  \newtheorem{lemma}[theorem]{Lemma}
+  \newtheorem{exercise}{Exercise}
+
+  \newcommand{\ra}{\rightarrow}
+  \newcommand{\Ra}{\Rightarrow}
+  \newcommand{\La}{\Leftarrow}
+  \newcommand{\la}{\leftarrow}
+  \newcommand{\LR}{\Leftrightarrow}
+
+  \renewcommand{\phi}{\varphi}
+  \renewcommand{\theta}{\vartheta}
+
+
+
+\newcommand{\ccfont}[1]{\protect\mathsf{#1}}
+\newcommand{\NP}{\ccfont{NP}}
+\newcommand{\SAT}{\mbox{\bf SAT}}
+\newcommand{\Ptime}{\ccfont{P}}
+\newcommand{\phs}[1]{\Sigma_{#1}\Ptime}
+\newcommand{\php}[1]{\Pi_{#1}\Ptime}
+\newcommand{\QSAT}[1]{\ccfont{QSAT}_{#1}}
+\newcommand{\MINSAT}{\mbox{\bf MINIMAL MODEL SAT}}
+\newcommand{\True}{\mathbf{true}}
+\newcommand{\False}{\mathbf{false}}
+
+
+\newcommand{\pap}{\ensuremath{\mathcal{P}}}
+\newcommand{\papp}{\ensuremath{\mathcal{P'}}}
+\newcommand{\mI}{\ensuremath{\mathcal{I}}}
+\newcommand{\mJ}{\ensuremath{\mathcal{J}}}
+\newcommand{\mJp}{\ensuremath{\mathcal{J'}}}
+\newcommand{\mJpp}{\ensuremath{\mathcal{J''}}}
+
+\renewcommand{\labelenumi}{(\alph{enumi})}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\maketitle
+
+\begin{tabbing}
+Submission Deadline: \quad \= \kill
+Name: \> Martin Kalany \\
+Matr-Nr: \> 0825673 \\
+Begin: \> 27 May, 2014  \\
+Submission Deadline: \>10 June, 2014  \\
+send to: \> \url{complexity@dbai.tuwien.ac.at}\\
+Maximum credits: \> 10 
+\end{tabbing}
+
+
+\medskip
+
+\noindent
+\begin{exercise}[5 credits]
+{\em 
+Recall the $\phs{2}$-hardness proof of the Abduction Solvability problem by reduction from $\QSAT{2}$:
+Let an arbitrary instance of the $\QSAT{2}$ problem be given by the formula 
+$\phi =  (\exists X) (\forall Y) \psi(X,Y)$
+with $X = \{x_1, \dots, x_k \}$ and $Y = \{y_1, \dots, y_l\}$. Moreover, let 
+$X' = \{x'_1, \dots, x'_k \}$, $R = \{r_1, \dots, r_k \}$, and $t$ be fresh variables. 
+Then we define an instance of Solvability as
+$\mathcal{P}=\langle V,H,M,T \rangle$ with
+%
+\begin{eqnarray*}
+V &=& X \cup Y  \cup X' \cup R \cup \{t\}\\
+H &=& X \cup X' \\
+M &=& R \cup \{t\}\\
+T &=& \{ \psi(X,Y)\ra t \} 
+\cup \{\neg x_i \vee \neg x'_i, x_i \ra r_i, x'_i \ra r_i \mid 1 \leq i \leq k\} 
+\end{eqnarray*}
+%
+
+\smallskip
+\noindent
+Give a rigorous correctness proof of this problem reduction, i.e., 
+$\phi \equiv \True$ $\LR$ $Sol(\mathcal{P}) \neq \emptyset$.
+
+}%em
+\end{exercise}
+
+\noindent
+{\bf Hint.} As usual, prove both directions of the equivalence separately. It is convenient to use the notation from the lecture: For 
+$A \subseteq X$, let $A'$  denote
+the set $\{x' \mid x \in A\}$.
+
+For the ``$\Ra$''-direction, you start off with a partial assignment $I$ on $X$.
+Let $I^{-1}(\True) = A$. Then it can be shown that $S = A \cup (X \setminus A)'$ 
+is a solution of $\mathcal{P}$. In order to show that $S$ is indeed a solution, you must prove carefully the two conditions that (1) $T \cup S$ is satisfiable
+and (2) $T \cup S \models M$. 
+
+For the ``$\La$''-direction, first show that a solution $S$ of $\mathcal{P}$
+contains exactly one  of $\{x_i, x'_i\}$. This is due to the 
+clauses $\{\neg x_i \vee \neg x'_i, x_i \ra r_i, x'_i \ra r_i\}$ in 
+$T$. Hence, $S$ must be of the form
+$S = A \cup (X \setminus A)'$ for some $A \subseteq X$.
+It remains to show that for the assignment $I$ on $X$ with $I^{-1}(\True) = A$, 
+every extension $J$ of $I$ to the variables $Y$ satisfies the formula $\psi(X,Y)$.
+
+\noindent
+\textbf{Solution:}
+
+$\Rightarrow$: 
+We have to show that $\phi \equiv \True \implies Sol(\pap) \neq 0$.
+We know that there exists a partial assignment \mI\ on the variables $X$ s.t.\ for any assignment to the variables in $Y$ $\phi$ evaluates to $\True$.
+Let $A = \mI^{-1} (\True)$ (note that $A \subseteq X$) and let $A' = \{x' \mid x \in A\}$.
+We claim that $S = A \cup (X \setminus A)'$ is a solution of \pap, i.e., 
+\begin{inparaenum}
+ \item $T \cup S$ is satisfiable and 
+ \item $T \cup S \models M$.
+\end{inparaenum}
+\begin{enumerate}
+ \item $T \cup S$ is satisfiable: We extend \mI\ to a satisfying truth assignment \mJ\ by
+ \begin{align}
+  \mJ(y_i) &= \False\;\;\forall 1 \leq i \leq l \\
+  \forall 1 \leq i \leq k: \mJ(x'_i) &= 
+  \begin{cases}
+  \True &\text{if } x' \not \in A' \\
+  \False &\text{otherwise}
+  \end{cases} \\
+  (\text{i.e., } \mJ(x'_i) &= \neg \mJ(x_i) = \neg \mI(x_i) \;\; \forall 1 \leq i \leq k)\\
+  \mJ(r_i) &= \True \;\;\forall 1 \leq i \leq k \\
+  \mJ(t) &= \True
+ \end{align}
+  The clause $\{ \psi(X,Y) \rightarrow t\}$ is $\True$ under \mJ\ since:
+  \begin{inparaenum}
+   \item $\psi(X,Y)$ is $\True$ under the partial assignment \mI\ to the variables $X$ for any assignment to the variables $Y$;  \mJ\ is an extension of \mI\ that assigns truth values to variables $Y$ and thus \mJ\ satisfies $\psi(X,Y)$, regardless of the actual truth values assigned to variables $Y$.
+   \item By (5), $\mJ(t) = \True$ and thus $\mJ( \psi(X,Y) \rightarrow t) = \True$.
+  \end{inparaenum}
+ For the clause $\{\neg x_i \vee \neg x'_i, x_i \ra r_i, x'_i \ra r_i \mid 1 \leq i \leq k\}$ we have $\forall 1 \leq i \leq k:$
+ \begin{itemize}
+  \item $\mJ(x_i \lor x'_i) = \True$ since $\mJ(x'_i) \iff \neg \mJ(x_i)$ and 
+  \item both $\mJ(x_i \ra r_i) = \True$ and $\mJ(x'_i \ra r_i) = \True$, since $\mJ(r_i) = \True$ (by (4)) and thus the clauses are $\True$ under \mJ, regardless of the truth assigments for $x_i$ and $x'_i$, respectively.
+ \end{itemize}
+ Thus, \mJ\ is indeed a satisfying truth assignment for  $S\cup T$, i.e.,  $S\cup T$ is satisfiable.
+ \item $T \cup S \models M$: 
+ Let \mJ\ be a model for $S\cup T$. 
+ As shown above, \mJ\ is a model for $\psi(X,Y)$ for any assignment to the variables $Y$. 
+ The clause $\{ \psi(X,Y) \rightarrow t\}$ then immediately implies that $S\cup T \models t$, since $\mJ(t)$ must evaluate to $\True$; otherwise \mJ\ cannot be a model of $S\cup T$.
+ From $S = A \cup (X\setminus A)'$ we know that $\forall 1 \leq i \leq k$, either $x_i \in S$ or $x'_i \in S$, i.e., $\mJ(x_i) \iff \neg \mJ(x'_i)$, implying that exactly one of $\{x_i, x'_i\}$ evaluates to $\True$ under \mJ.
+ For \mJ\ to be a model of $T\cup S$, both $\mJ(x_i \ra r_i)$ and $\mJ(x'_i \ra r_i)$ must evaluate to $\True$, which implies $\mJ(r_i) = \True$, i.e., $T\cup S \models r_i$.
+ Thus we have $T\cup S \models R \cup \{t\}$. \qed
+\end{enumerate}
+
+$\Leftarrow$: 
+We have to show that $Sol(\pap) \neq 0 \implies \phi \equiv \True$.
+Let $S \in Sol(\pap)$. 
+We know that some truth assignment \mI\ exists, s.t.\ $\mI(T\cup S) = \True$.
+Furthermore, we know $\mI(t) = \True$ and $\mI(r_i) = \True \; \;\forall 1\leq i \leq k$, because of $T \cup S \models M$.
+Assume that for some $1\leq i\leq k$, both $x_i$ and $x'_i$ are not part of the solution, i.e., are $\False$ under \mI. 
+Then, we could have $\mI(r_i) = \False$ and \mI\ would still be a model of $T\cup S$. 
+However, we then have $T \cup S \not \models M$, since $r_i \in M$, contradicting the assumption that for some $i$  neither $x_i$ nor $x'_i$ are part of the solution $S$.
+We conclude that for each $1\leq i \leq k$, at least one of $\{x_i, x'_i\}$ must be in $S$.
+The clause $\neg x_i \lor \neg x'_i$ in $T$ must be $\True$ under \mI, and thus either $\mI(x_i) = \False$ or $\mI(x'_i) = \False$ must hold, implying that one of $\{x_i, x'_i\}$ must not be in $S$.
+We conclude that $\forall 1\leq i \leq k: x_i \in S \iff x'_i \not \in S$, i.e., exactly one of $\{x_i, x'_i\}$ is in the solution $S$, which is thus of the form $S = A \cup (X \setminus A)'$.
+
+It remains to show that for the assignment $\mI$ on $X$ with $\mI^{-1}(\True) = A$, 
+every extension $\mJ$ of $\mI$ to the variables $Y$ satisfies the formula $\psi(X,Y)$. 
+Note that $\mI^{-1}(\False) = X\setminus A$.
+By contradiction: Assume $\mJ$ is an extension of $\mI$ that assigns truth values to the variables $Y$ s.t.\ $\mJ(\psi(X,Y)) =\False$.
+We extend $\mJ$ to an assignment $\mJp$, where $\mJp(t) = \False$ and $\forall 1 \leq i \leq l: \mJp(r_i) = \True$.
+Note that $\mJp(S) = \True$, since it is an extension of $\mI$, which was obtained from a solution $S$ for $\pap$.
+% Furthermore, $\mJp(T) = \True$, since $\mJp(\psi(X,Y)) = \mJ(\psi(X,Y)) = \False$, which implies that the clause $\psi(X,Y) \ra t$ is $\True$ under \mJp, regardless of the truth assignment for $t$.
+However, from $\mJp(t) = \False$ it follows directly that $S\cup T \not \models M$ since $S\cup T \not \models  t$ and $t \in M$; a contradiction to the assumption that $\mJp$ is an extension of the assignment \mI\ that was obtained from a solution $S$.
+
+\qed
+\medskip
+
+
+\noindent
+\begin{exercise}[5 credits]
+{\em Recall the $\phs{2}$-hardness proof of 
+the Abduction Relevance problem by reduction from 
+the Solvability problem:
+Let an arbitrary instance of the Solvability problem be given 
+by the PAP  $\mathcal{P}=\langle V,H,M,T \rangle$. 
+W.l.o.g., let $T$ consist of a single formula $\phi$ and
+let $h, h',m'$ be fresh variables. Then we define an 
+instance of the Relevance (resp.\ the Necessity) problem with the 
+following PAP
+ $\mathcal{P}'=\langle V', H',M',T' \rangle$:
+%
+\begin{eqnarray*}
+V' &=& V\cup\{h,h',m'\} \\
+H' &=& H\cup\{h,h'\} \\
+M' &=& M\cup\{m'\}\\
+T' &=& \{\neg h \vee \phi\} \cup \{h'\ra m \mid m\in M\} \cup \{\neg h \vee \neg h', h \ra m', h' \ra m'\}
+\end{eqnarray*}
+%
+This reduction fulfills the following equivalences: 
+
+\begin{quote}
+$\mathcal{P}$ has at least one
+solution iff $h$ is relevant in $\mathcal{P}'$ iff 
+$h'$ is not necessary in $\mathcal{P}'$.%
+\end{quote}
+
+\smallskip
+\noindent
+Give a rigorous proof of these equivalences.
+} % em
+\end{exercise}
+
+
+\noindent
+{\bf Hints.} 
+\begin{itemize}
+\item Show both directions of the first equivalence separately:
+
+For the ``$\Ra$''-direction, you start off with a
+solution $S$ of $\mathcal{P}$ and construct a solution $S'$ of $\mathcal{P}'$ with $h \in S'$. Prove carefully that $S'$ is indeed a solution of $\mathcal{P}'$, i.e. (1) $T' \cup S'$ is satisfiable
+and (2) $T' \cup S' \models M'$. 
+
+For the ``$\La$''-direction, you start off with a
+solution $S'$ of $\mathcal{P}'$, s.t.\ $h \in S'$ and construct a solution $S$ of $\mathcal{P}$.
+Prove carefully that $S$ is indeed a solution of $\mathcal{P}$, i.e. (1) $T \cup S$ is satisfiable
+and (2) $T \cup S \models M$. 
+
+\item The second equivalence 
+follows easily from the clauses $\{\neg h \vee \neg h', h \ra m', h' \ra m'\}$ in $T'$, i.e., every solution of 
+$\mathcal{P}'$ contains exactly one of $\{h,h'\}$.
+\end{itemize}
+
+\noindent
+\textbf{Solution:}
+
+We first show 
+$
+\pap \text{ has at least one solution} \implies h \text{ is relevant in } \papp
+$
+Let $S = Sol(\pap)$ be an arbitrary solution of the PAP \pap. 
+We construct a solution $S'$ of the PAP \papp\ as $S' = S \cup \{h\}$, for which we have to show that
+\begin{inparaenum}
+ \item $T' \cup S'$ is satisfiable and
+ \item $T' \cup S' \models M'$.
+\end{inparaenum}
+
+\begin{enumerate}
+ \item $T' \cup S'$ is satisfiable:
+Since $S$ is a solution for \pap, we know that an interpretation \mI, s.t. $\mI(T\cup S) = \True$, has to exist.
+We extend \mI\ to an interpretation \mJ, where $\mJ = \mI$ and additionally $\mJ(h) = \True$, $\mJ(h') = \False$ and $\mJ(m') = \True$.
+We argue that \mJ\ is a model for $T' \cup S'$:
+It follows immediately from the construction of \mJ\ that $\mJ(S') = \mJ(S \land h) = \True$.
+$\{\neg h \lor \phi\}$ is $\True$ under \mJ\ since $\mJ(\phi) = \mI(\phi) = \True$.
+$\{h' \rightarrow m \mid m \in M \}$ is $\True$ under \mJ, since (by construction of \mJ) $\mJ(h') = \False$ implies $\mJ(h' \rightarrow m) = \True \;\;\forall m \in M$, regardless of the truth value assigned to $m$.
+Finally, $\mJ(h') = \False \implies \mJ(\neg h \lor \neg h') = \True$ and $\mJ(m') = \True \implies \mJ(h\rightarrow m') = \True \land \mJ(h'\rightarrow m') = \True$ and thus $T' \cup S'$ is satisfiable (since \mJ\ is indeed a model of $T' \cup S'$).
+ \item $T' \cup S' \models M'$: 
+Let \mI\ be a model of $T' \cup S'$, i.e., $\mI(T' \land S')=\True$. In particular,
+\begin{itemize}
+\item $\mI(\neg h \lor \phi) = \True$. 
+Thus, by the assumption, the assignment $\mJ$ constructed by restricting the variable assignments in \mI\ to variables occuring in $T \cup S$ entails $M$ and thus $T' \cup S' \models M$;
+\item $\mI(h \rightarrow m') = \True$. Since $\mI(h) = \True$, we neccessarily get $\mI(m') = \True$, i.e., $S' \cup T' \models m'$;
+\end{itemize}
+and thus $T' \cup S' \models M\cup \{m'\}$.
+\end{enumerate}
+We thus have shown that if \pap\ has a solution, $h$ is relavant in \papp.\qed
+
+\medskip
+Next, we show that $h$ is relevant in \papp\ $\implies$ \pap\ has at least one solution.
+Let $S'$ be a solution of \papp\ s.t.\ $h\in S'$.
+We construct a solution $S$ for \pap\ as $S = \{s \mid s \in S' \land s \in H \}$ and again have to show that  $S$ is indeed a solution of \pap, i.e., 
+\begin{inparaenum}
+ \item $T \cup S$ is satisfiable and
+ \item $T \cup S \models M$.
+\end{inparaenum}
+\begin{enumerate}
+ \item Let \mI\ be an arbitrary model of $T' \cup S'$ (which has to exist, since by assumption $S'$ is a solution of \papp).
+ Since $\mI(h) = \True$, we get $\mI(\phi) = \True$ because of the clause $\{\neg h \lor \phi\}$ being part of the theory $T'$.
+ We construct a model \mJ\ by restricting the variable assignments in \mI\ to variables occuring in $\phi \cup S$.
+ Obviously, $\mJ(\phi \land S) = \True$, i.e., $T\cup S$ is satisfiable.
+ \item By contradiction: assume that $T \cup S \not \models M$, i.e., $\exists \mI, m\in M \text{ s.t. } \mI(T \cup S) = \True \land \mI(m) = \False$.
+ As above, we construct an interpretation \mJ\, where $\mJ = \mI$, $\mJ(h) = \True$, $\mJ(h') = \False$ and $\mJ(m') = \True$.
+ Cleary, $\mJ(T'\cup S') = \True$ while $\mJ(m) = \False$ for some $m \in M'$ (where $m \neq m'$), a condradiction to the assumption that $T' \cup S' \models M'$.
+\end{enumerate}
+This concludes the proof for the first of the two equivalences. 
+\qed
+
+As the hint suggests, the second equivalence follows almost immediately:
+
+$\Rightarrow$: $h$ is relavant in $\papp$ implies that for any solution $S'$, $h \in S'$ and thus $\mI(h) = \True$ in any truth assigment satisfying $T' \cup S'$. 
+The clause $\neg h \lor \neg h'$ in $T'$ directly implies $\mI(h') = \False$, i.e., there is a solution $S'$ for \papp\ that does not contain $h'$.
+ 
+$\Leftarrow$: $h'$ not being neccessary implies that there is a solution $S'$ of \papp\ s.t.\ $h' \not \in S'$. 
+Let $\mI$ be a truth assignment s.t.\ $\mI(T' \cup S') = \True$ and assume that $h$ is not relavant, i.e., $h \not \in S'$ and thus $\mI(h) = \mI(h') = \False$. 
+Then, $h \rightarrow m' \land h' \rightarrow m'$ is $\True$ under \mI\ even if $\mI(m') = \False$, i.e., $S' \cup T' \not \models m'$, a condradiction to the assumption that $S'$ is a solution for \papp.
+\qed
+
+
+
+\end{document}
+
